@@ -1,0 +1,23 @@
+cmake_minimum_required(VERSION 3.10)
+project(gpu_openmp VERSION 1.0 LANGUAGES C)
+
+set(CMAKE_C_STANDARD 11)
+set(CMAKE_C_EXTENSIONS OFF)
+
+file(GLOB c_files  "${CMAKE_CURRENT_SOURCE_DIR}/*_gpu.c")
+foreach(c_file ${c_files})
+    get_filename_component(base_name ${c_file} NAME_WE)
+    set(executable_name "${base_name}.exe")
+    add_executable(${executable_name} ${c_file})
+    target_compile_options(${executable_name} PRIVATE -mp=gpu)
+    target_link_options(${executable_name} PRIVATE -mp=gpu)
+endforeach()
+
+file(GLOB c_files  "${CMAKE_CURRENT_SOURCE_DIR}/*_cpu.c")
+foreach(c_file ${c_files})
+    get_filename_component(base_name ${c_file} NAME_WE)
+    set(executable_name "${base_name}.exe")
+    add_executable(${executable_name} ${c_file})
+    target_compile_options(${executable_name} PRIVATE -mp)
+    target_link_options(${executable_name} PRIVATE -mp)
+endforeach()
