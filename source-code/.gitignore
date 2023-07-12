@@ -1,0 +1,16 @@
+# build directory
+build/
+
+# executables
+*.exe
+a.out
+
+# object files
+*.o
+*.so
+*.a
+
+# backup files
+*~
+*.bak
+*.swp
