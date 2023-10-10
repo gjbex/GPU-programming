@@ -21,7 +21,9 @@ __global__ void saxpy(float *y,
 int main(int argc, char *argv[]) {
     cudaError_t err = cudaSuccess;
     const int block_size = 32;
-    const float alpha = 1.3f;
+    const float alpha = 2.0f;
+    const float x_init = 1.0f;
+    const float y_init = 2.0f;
     int array_size = block_size; 
     if (argc > 1) {
         array_size = atoi(argv[1]);
@@ -36,8 +38,8 @@ int main(int argc, char *argv[]) {
         exit(1);
     }
     for (int i = 0; i < array_size; i++) {
-        x[i] = i*0.01f;
-        y[i] = 0.5f;
+        x[i] = x_init;
+        y[i] = y_init;
     }
     if (array_size < 100) {
         print_array(y, array_size);
@@ -81,7 +83,7 @@ int main(int argc, char *argv[]) {
     }
     float max_error = 0.0f;
     for (int i = 0; i < array_size; i++) {
-        float diff = fabs(y[i] - (0.5f + alpha*i*0.01f));
+        float diff = fabs(y[i] - (y_init + alpha*x_init));
         if (diff > max_error) {
             max_error = diff;
         }
