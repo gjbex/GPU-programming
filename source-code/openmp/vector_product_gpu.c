@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-#define NX 204800000
+#define NX 2048000
 
 int main()
 {
