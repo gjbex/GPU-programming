@@ -23,6 +23,8 @@ HPC SDK](https://developer.nvidia.com/hpc-sdk) is used.
    the use of the `target` directive with a structured data region.
 1. `unstructured_data_region_gpu.c`: application that demonstrates
    the use of the `target` directive with an unstructured data region.
+1. `heat_gpu.c`: application that solves the heat equation on the GPU and
+   illustrates how to update data between device and host.
 1. `CMakeLists.txt`: CMake file to build the applications.
 1. `compiler_issues`: directory that contains example that can not be
    compiled with the NVIDIA HPC SDK compiler.
