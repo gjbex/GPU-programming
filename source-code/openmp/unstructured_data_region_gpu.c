@@ -8,12 +8,20 @@ int main(int argc, char *argv[]) {
     const int n = argc > 1 ? atoi(argv[1]) : 1000;
     const int nr_iters = argc > 2 ? atoi(argv[2]) : 10;
     float *a = (float *) malloc(n*n*sizeof(float));
+    if (!a) {
+        fprintf(stderr, "Error: could not allocate memory\n");
+        return 1;
+    }
 #pragma omp target enter data map(to:a[0:n*n])
 #pragma omp target teams distribute parallel for
     for (int i = 0; i < n; i++) {
         a[i*n + i] = 0.0f;
     } 
     float *b = (float *) malloc(n*n*sizeof(float));
+    if (!b) {
+        fprintf(stderr, "Error: could not allocate memory\n");
+        return 1;
+    }
     for (int i = 0; i < n; i++) {
         for (int j = 0; j < n; j++) {
             b[i*n + j] = 2.0f*(rand()/(float) RAND_MAX - 0.5f);
@@ -28,6 +36,7 @@ int main(int argc, char *argv[]) {
             }
         }
     }
+    free(b);
 #pragma omp target exit data map(from:a[0:n*n])
     float sum = 0.0f;
     for (int i = 0; i < n; i++) {
