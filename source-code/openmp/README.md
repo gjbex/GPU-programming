@@ -17,7 +17,11 @@ HPC SDK](https://developer.nvidia.com/hpc-sdk) is used.
    on the GPU.
 1. `vector_product_cpu.c`: application that computes a vector product
    on the CPU.
+1. `julia_omp_cpu.c`: application that computes a Julia set on the CPU.
+1. `julia_omp_gpu.c`: application that computes a Julia set on the GPU.
 1. `CMakeLists.txt`: CMake file to build the applications.
+1. `compiler_issues`: directory that contains example that can not be
+   compiled with the NVIDIA HPC SDK compiler.
 
 
 ## How to build?
