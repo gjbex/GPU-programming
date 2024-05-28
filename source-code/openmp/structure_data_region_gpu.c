@@ -21,7 +21,7 @@ int main(int argc, char *argv[]) {
         float *b = (float *) malloc(n*n*sizeof(float));
         if (!b) {
             fprintf(stderr, "Error: could not allocate memory\n");
-            return 1;
+            exit(1);
         }
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
