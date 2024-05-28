@@ -3,7 +3,7 @@
 This repository contains material for a training on hardware-agnostic GPU
 programming.
 
-Note: This is work in progress.
+**Note:** This is work in progress.
 
 The paradigms coverred are:
 
