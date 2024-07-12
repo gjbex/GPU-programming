@@ -11,3 +11,5 @@ in this repository.
    HPC Toolkit.
 1. `oneapi-for-nvidia-gpus-2024.1.0-cuda-12.0-linux.sh`: script to install
    a backend for Intel oneAPI HPC Toolkit to use NVIDIA GPUs.
+1. `kokkos.py`: hpccm recipe to build an environment with the NVIDA HPC SDK
+   and the Kokkos framework.
