@@ -68,12 +68,12 @@ int main(int argc, char* argv[]) {
         view_type b("B", N);
         view_type c("C", N);
 
-        Kokkos::parallel_for(N, InitView(a, b, c));
+        Kokkos::parallel_for("init_vectors", N, InitView(a, b, c));
         Kokkos::fence();
-        Kokkos::parallel_for(N, VectorProductFunctor(a, b, c, n));
+        Kokkos::parallel_for("multiply_vectors", N, VectorProductFunctor(a, b, c, n));
         Kokkos::fence();
         float sum {0.0f};
-        Kokkos::parallel_reduce(N, ReduceFunctor(c), sum);
+        Kokkos::parallel_reduce("sum_components", N, ReduceFunctor(c), sum);
         std::cout << "Result: " << sum << std::endl;
     }
     Kokkos::finalize();

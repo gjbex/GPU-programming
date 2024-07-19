@@ -18,20 +18,20 @@ int main(int argc, char* argv[]) {
         view_type c("C", N);
 
         float r {2.1f};
-        Kokkos::parallel_for(N, KOKKOS_LAMBDA(const int i) {
+        Kokkos::parallel_for("init_vectors", N, KOKKOS_LAMBDA(const int i) {
                 a(i) = r*i;
                 b(i) = 2.1f;
                 c(i) = 0.0f;
                 });
         Kokkos::fence();
-        Kokkos::parallel_for(N, KOKKOS_LAMBDA(const int i) {
+        Kokkos::parallel_for("multiply_vectors", N, KOKKOS_LAMBDA(const int i) {
                 for (int j = 0; j < n; ++j) {
                     c(i) += a(i)*b(i);
                 }
                 });
         Kokkos::fence();
         float sum {0.0f};
-        Kokkos::parallel_reduce(N, KOKKOS_LAMBDA(const int i, float& sum) {
+        Kokkos::parallel_reduce("sum_components", N, KOKKOS_LAMBDA(const int i, float& sum) {
                     sum += a(i);
                 },
                 sum);
