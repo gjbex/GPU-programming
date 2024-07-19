@@ -14,4 +14,6 @@ several backends such as OpenMP, CUDA, HIP, and SYCL.
    to a non-scalar.
 1. `pi.cpp`: Monte Carlo approximation of pi, illustrating the use of
    `Kokkos::Random_X` classes.
+1. `matrix_vector.cpp`: matrix-vector multiplication illustrating the
+   use of `Kokkos::Fence`.
 1. `CMakeLists.txt`: CMake file to build the applications.
