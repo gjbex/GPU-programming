@@ -23,11 +23,13 @@ int main(int argc, char* argv[]) {
                 b(i) = 2.1f;
                 c(i) = 0.0f;
                 });
+        Kokkos::fence();
         Kokkos::parallel_for(N, KOKKOS_LAMBDA(const int i) {
                 for (int j = 0; j < n; ++j) {
                     c(i) += a(i)*b(i);
                 }
                 });
+        Kokkos::fence();
         float sum {0.0f};
         Kokkos::parallel_reduce(N, KOKKOS_LAMBDA(const int i, float& sum) {
                     sum += a(i);
