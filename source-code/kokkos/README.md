@@ -12,4 +12,6 @@ several backends such as OpenMP, CUDA, HIP, and SYCL.
 1. `vector_product_lambdas.cpp`: vector multiplication using lambdas.
 1. `random_numbers.cpp`: illustrates deep copy of views and reduction
    to a non-scalar.
+1. `pi.cpp`: Monte Carlo approximation of pi, illustrating the use of
+   `Kokkos::Random_X` classes.
 1. `CMakeLists.txt`: CMake file to build the applications.
