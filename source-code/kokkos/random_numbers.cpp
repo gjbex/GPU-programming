@@ -18,6 +18,12 @@ struct MultiSum {
         size_type value_count;
         explicit MultiSum(view_type data) : data_(data), value_count {data.extent(1)} {}
         KOKKOS_INLINE_FUNCTION
+            void init(value_type result) const {
+                for (int j = 0; j < value_count; ++j) {
+                    result[j] = 0.0f;
+                }
+            }
+        KOKKOS_INLINE_FUNCTION
             void operator()(const size_type i, value_type result) const {
                 for (int j = 0; j < value_count; ++j) {
                     result[j] += data_(i, j);
