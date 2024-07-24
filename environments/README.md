@@ -6,6 +6,8 @@ in this repository.
 
 ## What is it?
 
+1. `environment.yml`: conda environment file for a Python environment with
+   the necessary packages to run the Python scripts in this repository.
 1. `nvidia_hpc.py`: hpccm recipe to build an environment with NVIDIA HPC SDK.
 1. `oneapi_hpc.py`: hpccm recipe to build an environment with Intel oneAPI
    HPC Toolkit.
