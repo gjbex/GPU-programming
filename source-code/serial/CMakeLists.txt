@@ -29,3 +29,5 @@ foreach(src_file ${src_files})
     target_link_libraries(${executable_name} PRIVATE Boost::program_options)
     target_include_directories(${executable_name} PRIVATE ${Boost_INCLUDE_DIRS})
 endforeach()
+
+add_subdirectory(molecular-dynamics)
