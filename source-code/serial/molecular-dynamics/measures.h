@@ -1,6 +1,8 @@
 #ifndef MEASURES_HDR
 #define MEASURES_HDR
 
+#include <cmath>
+
 #include "abstract_measures.h"
 
 struct KineticEnergy : public ScalarMeasure {
@@ -63,6 +65,33 @@ struct DistanceDistribution : public Measure<std::vector<double>> {
             Measure<std::vector<double>>("distance_distribution", particles) {}
         std::vector<double> compute_value() const override;
         std::string current_value() const override;
+};
+
+struct DistanceDistributionStats : public StatisticsMeasure {
+    public:
+        explicit DistanceDistributionStats(const Particles& particles) :
+            StatisticsMeasure("dist_mean dist_std_dev dist_min dist_max", particles) {}
+        stats_t compute_value() const override;
+};
+
+struct VelocityDistributionStats : public StatisticsMeasure {
+    public:
+        explicit VelocityDistributionStats(const Particles& particles) :
+            StatisticsMeasure("vel_mean vel_std_dev vel_min vel_max", particles) {}
+        stats_t compute_value() const override;
+};
+
+struct ForceDistributionStats : public StatisticsMeasure {
+    protected:
+        double epsilon_;
+        double sigma_;
+        double sigma6_ {sigma_*sigma_*sigma_*sigma_*sigma_*sigma_};
+        double sigma12_ {sigma6_*sigma6_};
+    public:
+        ForceDistributionStats(const Particles& particles, double epsilon, double sigma) :
+            StatisticsMeasure("force_mean force_std_dev force_min force_max", particles),
+            epsilon_{epsilon}, sigma_{sigma}  {}
+        stats_t compute_value() const override;
 };
 
 #endif
