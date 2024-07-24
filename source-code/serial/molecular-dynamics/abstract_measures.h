@@ -2,6 +2,7 @@
 #define ABSTRACT_MEASURE_HDR
 
 #include "particles.h"
+#include "statistics.h"
 
 template <typename T>
 struct Measure {
@@ -32,6 +33,12 @@ struct ScalarMeasure : public Measure<double> {
 
 struct VectorMeasure : public Measure<position_t> {
     using Measure<position_t>::Measure;
+    public:
+        std::string current_value() const override;
+};
+
+struct StatisticsMeasure : public Measure<stats_t> {
+    using Measure<stats_t>::Measure;
     public:
         std::string current_value() const override;
 };

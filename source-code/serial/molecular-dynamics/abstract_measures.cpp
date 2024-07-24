@@ -12,3 +12,11 @@ std::string VectorMeasure::current_value() const {
         " " + std::format("{:.5e}", value[1]) +
         " " + std::format("{:.5e}", value[2]);
 }
+
+std::string StatisticsMeasure::current_value() const {
+    const auto& value = values_.back();
+    return std::format("{:.5e}", value.mean) +
+        " " + std::format("{:.5e}", value.std_dev) +
+        " " + std::format("{:.5e}", value.min) +
+        " " + std::format("{:.5e}", value.max);
+}
