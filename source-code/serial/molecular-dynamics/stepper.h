@@ -12,9 +12,7 @@ struct Stepper {
         const double sigma6_ {sigma_*sigma_*sigma_*sigma_*sigma_*sigma_};
         const double sigma12_ {sigma6_*sigma6_};
         const double delta_t_;
-        std::vector<double> fx_;
-        std::vector<double> fy_;
-        std::vector<double> fz_;
+        std::vector<double> f_;
 
         force_t compute_force(const position_t& pos1, const position_t& pos2);
         void compute_forces(const Particles& particles);
