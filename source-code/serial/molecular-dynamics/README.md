@@ -21,6 +21,9 @@ as a basis for molecular dynamics applications.
 1. `stepper.cpp`: class implementation for a time stepper.
 1. `abstract_measures.h`: template and class definition for
    measures that can be computed during the simulation.
+1. `abstract_measures.cpp`: implementations for general measure methods.
+1. `statistics.h`: class definition for statistics that can be computed
+   during the simulation.
 1. `measures.h`: class definition for measures that can be computed
    during the simulation.
 1. `measures.cpp`: class implementation for measures that can be
