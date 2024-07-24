@@ -24,6 +24,18 @@ struct Measure {
         ~Measure() = default;
 };
 
+struct ScalarMeasure : public Measure<double> {
+    using Measure<double>::Measure;
+    public:
+        std::string current_value() const override;
+};
+
+struct VectorMeasure : public Measure<position_t> {
+    using Measure<position_t>::Measure;
+    public:
+        std::string current_value() const override;
+};
+
 struct MeasureBase {
     public:
         virtual std::string name() const = 0;

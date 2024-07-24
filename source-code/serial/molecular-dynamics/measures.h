@@ -3,18 +3,17 @@
 
 #include "abstract_measures.h"
 
-struct KineticEnergy : public Measure<double> {
+struct KineticEnergy : public ScalarMeasure {
     protected:
         const double mass_;
 
     public:
         explicit KineticEnergy(const Particles& particles, double mass) :
-            Measure<double>("kinetic_energy", particles), mass_{mass} {}
+            ScalarMeasure("kinetic_energy", particles), mass_{mass} {}
         double compute_value() const override;
-        std::string current_value() const override;
 };
 
-struct PotentialEnergy : public Measure<double> {
+struct PotentialEnergy : public ScalarMeasure {
     protected:
         double epsilon_;
         double sigma_;
@@ -32,12 +31,11 @@ struct PotentialEnergy : public Measure<double> {
 
     public:
         explicit PotentialEnergy(const Particles& particles, double epsilon, double sigma) :
-            Measure<double>("potential_energy", particles), epsilon_{epsilon}, sigma_{sigma} {}
+            ScalarMeasure("potential_energy", particles), epsilon_{epsilon}, sigma_{sigma} {}
         double compute_value() const override;
-        std::string current_value() const override;
 };
 
-struct TotalEnergy : public Measure<double> {
+struct TotalEnergy : public ScalarMeasure {
     protected:
         const KineticEnergy& kinetic_energy_;
         const PotentialEnergy& potential_energy_;
@@ -45,20 +43,18 @@ struct TotalEnergy : public Measure<double> {
     public:
         TotalEnergy(const Particles& particles, const KineticEnergy& kinetic_energy,
                 const PotentialEnergy& potential_energy) :
-            Measure<double>("total_energy", particles), kinetic_energy_{kinetic_energy},
+            ScalarMeasure("total_energy", particles), kinetic_energy_{kinetic_energy},
             potential_energy_{potential_energy} {}
         double compute_value() const override {
             return kinetic_energy_.get_value(values_.size()) + potential_energy_.get_value(values_.size());
         }
-        std::string current_value() const override;
 };
 
-struct CenterOfMass : public Measure<position_t> {
+struct CenterOfMass : public VectorMeasure {
     public:
         explicit CenterOfMass(const Particles& particles) :
-            Measure<position_t>("cm_x cm_y cm_z", particles) {}
+            VectorMeasure("center_of_mass", particles) {}
         position_t compute_value() const override;
-        std::string current_value() const override;
 };
 
 struct DistanceDistribution : public Measure<std::vector<double>> {

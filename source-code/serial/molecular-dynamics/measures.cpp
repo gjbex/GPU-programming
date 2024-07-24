@@ -15,10 +15,6 @@ double KineticEnergy::compute_value() const {
     return 0.5f*mass_*v2;
 }
 
-std::string KineticEnergy::current_value() const {
-    return std::format("{:.5e}", values_.back());
-}
-
 double PotentialEnergy::compute_value() const {
     double energy = 0.0f;
     for (size_t i = 0; i < particles_.size(); ++i) {
@@ -27,14 +23,6 @@ double PotentialEnergy::compute_value() const {
         }
     }
     return 2.0f*energy;
-}
-
-std::string PotentialEnergy::current_value() const {
-    return std::format("{:.5e}", values_.back());
-}
-
-std::string TotalEnergy::current_value() const {
-    return std::format("{:.5e}", values_.back());
 }
 
 position_t CenterOfMass::compute_value() const {
@@ -49,13 +37,6 @@ position_t CenterOfMass::compute_value() const {
     com[1] /= particles_.size();
     com[2] /= particles_.size();
     return com;
-}
-
-std::string CenterOfMass::current_value() const {
-    const auto& value = values_.back();
-    return std::format("{:.5e}", value[0]) +
-        " " + std::format("{:.5e}", value[1]) +
-        " " + std::format("{:.5e}", value[2]);
 }
 
 std::vector<double> DistanceDistribution::compute_value() const {
