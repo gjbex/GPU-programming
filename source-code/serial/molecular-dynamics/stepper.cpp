@@ -18,12 +18,10 @@ void Stepper::compute_forces(const Particles& particles) {
     for (size_t i = 0; i < particles.size(); ++i) {
         for (size_t j = i + 1; j < particles.size(); ++j) {
             const auto force = compute_force(particles.position(i), particles.position(j));
-            f_[3*i] += force[0];
-            f_[3*i + 1] += force[1];
-            f_[3*i + 2] += force[2];
-            f_[3*j] -= force[0];
-            f_[3*j + 1] -= force[1];
-            f_[3*j + 2] -= force[2];
+            for (size_t k = 0; k < 3; ++k) {
+                f_[3*i + k] += force[k];
+                f_[3*j + k] -= force[k];
+            }
         }
     }
 }
@@ -33,8 +31,8 @@ void Stepper::update_positions(Particles& particles, double delta_t) {
         const auto pos {particles.position(i)};
         const auto vel {particles.velocity(i)};
         position_t new_pos;
-        for (size_t j = 0; j < 3; ++j) {
-            new_pos[j] = pos[j] + vel[j]*delta_t;
+        for (size_t k = 0; k < 3; ++k) {
+            new_pos[k] = pos[k] + vel[k]*delta_t;
         }
         particles.position(i, new_pos);
     }
@@ -43,10 +41,11 @@ void Stepper::update_positions(Particles& particles, double delta_t) {
 void Stepper::update_velocities(Particles& particles, double delta_t) {
     for (size_t i = 0; i < particles.size(); ++i) {
         const auto vel {particles.velocity(i)};
-        const double vx {vel[0] + f_[3*i]*delta_t/mass_};
-        const double vy {vel[1] + f_[3*i + 1]*delta_t/mass_};
-        const double vz {vel[2] + f_[3*i + 2]*delta_t/mass_};
-        particles.velocity(i, {vx, vy, vz});
+        velocity_t new_vel;
+        for (size_t k = 0; k < 3; ++k) {
+            new_vel[k] = vel[k] + f_[3*i + k]*delta_t/mass_;
+        }
+        particles.velocity(i, new_vel);
     }
 }
 

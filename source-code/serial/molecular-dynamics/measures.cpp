@@ -10,7 +10,9 @@ double KineticEnergy::compute_value() const {
     double v2 {0.0f};
     for (size_t i = 0; i < particles_.size(); ++i) {
         const auto vel {particles_.velocity(i)};
-        v2 += vel[0]*vel[0] + vel[1]*vel[1] + vel[2]*vel[2];
+        for (size_t k = 0; k < 3; ++k) {
+            v2 += vel[k]*vel[k];
+        }
     }
     return 0.5f*mass_*v2;
 }
@@ -29,13 +31,13 @@ position_t CenterOfMass::compute_value() const {
     position_t com = {0.0f, 0.0f, 0.0f};
     for (size_t i = 0; i < particles_.size(); ++i) {
         const auto pos = particles_.position(i);
-        com[0] += pos[0];
-        com[1] += pos[1];
-        com[2] += pos[2];
+        for (size_t k = 0; k < 3; ++k) {
+            com[k] += pos[k];
+        }
     }
-    com[0] /= particles_.size();
-    com[1] /= particles_.size();
-    com[2] /= particles_.size();
+    for (size_t k = 0; k < 3; ++k) {
+        com[k] /= particles_.size();
+    }
     return com;
 }
 
