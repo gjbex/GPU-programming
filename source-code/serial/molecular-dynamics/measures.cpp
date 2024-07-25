@@ -100,9 +100,10 @@ stats_t ForceDistributionStats::compute_value() const {
             const double dy {pos2[1] - pos1[1]};
             const double dz {pos2[2] - pos1[2]};
             const double r2 {dx*dx + dy*dy + dz*dz};
+            const double r {sqrt(r2)};
             const double r6 {r2*r2*r2};
             const double r12 {r6*r6};
-            const double f {24.0f*epsilon_*(2.0f*sigma12_/r12 - sigma6_/r6)/r2};
+            const double f {24.0f*epsilon_*(2.0f*sigma12_/r12 - sigma6_/r6)/r};
             stats.add_value(f);
         }
     }

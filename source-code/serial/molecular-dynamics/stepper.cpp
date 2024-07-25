@@ -5,11 +5,10 @@ force_t Stepper::compute_force(const position_t& pos1, const position_t& pos2) {
     const double dy = pos2[1] - pos1[1];
     const double dz = pos2[2] - pos1[2];
     const double r2 = dx*dx + dy*dy + dz*dz;
-    const double r = sqrt(r2);
     const double r6 = r2*r2*r2;
     const double r12 = r6*r6;
     const double f = 24.0f*epsilon_*(2.0f*sigma12_/r12 - sigma6_/r6)/r2;
-    return {f*dx/r, f*dy/r, f*dz/r};
+    return {f*dx, f*dy, f*dz};
 }
 
 void Stepper::compute_forces(const Particles& particles) {
@@ -33,10 +32,11 @@ void Stepper::update_positions(Particles& particles, double delta_t) {
     for (size_t i = 0; i < particles.size(); ++i) {
         const auto pos {particles.position(i)};
         const auto vel {particles.velocity(i)};
-        const double x {pos[0] + vel[0]*delta_t};
-        const double y {pos[1] + vel[1]*delta_t};
-        const double z {pos[2] + vel[2]*delta_t};
-        particles.position(i, {x, y, z});
+        position_t new_pos;
+        for (size_t j = 0; j < 3; ++j) {
+            new_pos[j] = pos[j] + vel[j]*delta_t;
+        }
+        particles.position(i, new_pos);
     }
 }
 

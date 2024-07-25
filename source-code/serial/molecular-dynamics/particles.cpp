@@ -6,15 +6,11 @@ Particles::Particles(int nr_particles, double box_size, double sigma_velocity, u
         vel_.reserve(3*nr_particles);
         std::mt19937 gen(seed);
         std::uniform_real_distribution<double> position_distr(-0.5f*box_size, 0.5f*box_size);
-        for (int i = 0; i < nr_particles; ++i) {
-            pos_.push_back(position_distr(gen));
-            pos_.push_back(position_distr(gen));
+        for (int i = 0; i < 3*nr_particles; ++i) {
             pos_.push_back(position_distr(gen));
         }
         std::normal_distribution<double> velocity_distr(0.0f, sigma_velocity_);
-        for (int i = 0; i < nr_particles; ++i) {
-            vel_.push_back(velocity_distr(gen));
-            vel_.push_back(velocity_distr(gen));
+        for (int i = 0; i < 3*nr_particles; ++i) {
             vel_.push_back(velocity_distr(gen));
         }
     }
