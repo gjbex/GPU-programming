@@ -7,7 +7,7 @@ force_t Stepper::compute_force(const position_t& pos1, const position_t& pos2) {
     const double r2 = dx*dx + dy*dy + dz*dz;
     const double r6 = r2*r2*r2;
     const double r12 = r6*r6;
-    const double f = 24.0f*epsilon_*(2.0f*sigma12_/r12 - sigma6_/r6)/r2;
+    const double f = -24.0f*epsilon_*(2.0f*sigma12_/r12 - sigma6_/r6)/r2;
     return {f*dx, f*dy, f*dz};
 }
 
