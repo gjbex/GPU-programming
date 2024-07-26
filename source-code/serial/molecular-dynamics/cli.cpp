@@ -32,8 +32,6 @@ command_line_args parse_command_line(int argc, char* argv[], const command_line_
          "Lennard-Jones sigma (m)")
         ("velocity_sigma", po::value<double>(&args.velocity_sigma)->default_value(args.velocity_sigma),
          "velocity sigma (m/s)")
-        ("temperature", po::value<double>(&args.temperature)->default_value(args.temperature),
-         "temperature (K)")
         ("seed", po::value<unsigned long>(&args.seed)->default_value(args.seed),
          "random seed");
     po::variables_map vm;

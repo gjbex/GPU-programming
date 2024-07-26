@@ -12,7 +12,6 @@ struct command_line_args {
     double mass {7.3e-26};
     double epsilon {256.0*1.38e-23};
     double sigma {0.37e-9};
-    double temperature {300.0};
     double velocity_sigma {3.2e2};
     unsigned long seed {1234};
 };

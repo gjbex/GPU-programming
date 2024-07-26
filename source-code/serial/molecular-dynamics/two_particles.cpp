@@ -40,7 +40,6 @@ int main(int argc, char* argv[]) {
         .mass = 1.0,
         .epsilon = 1.0,
         .sigma = 1.0,
-        .temperature = 300.0,
         .velocity_sigma = 1.0,
         .seed = 1234
     };
