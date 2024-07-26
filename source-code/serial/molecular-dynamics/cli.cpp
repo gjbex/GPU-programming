@@ -3,8 +3,13 @@
 #include "cli.h"
 
 command_line_args parse_command_line(int argc, char* argv[]) {
+    command_line_args defaults;
+    return parse_command_line(argc, argv, defaults); 
+}
+
+command_line_args parse_command_line(int argc, char* argv[], const command_line_args& defaults) {
     namespace po = boost::program_options;
-    command_line_args args;
+    command_line_args args {defaults};
     po::options_description desc("Allowed options");
     // default values are for CO_2
     desc.add_options()

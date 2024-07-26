@@ -20,5 +20,6 @@ struct command_line_args {
 namespace po = boost::program_options;
 
 command_line_args parse_command_line(int argc, char* argv[]);
+command_line_args parse_command_line(int argc, char* argv[], const command_line_args& defaults);
 
 #endif
