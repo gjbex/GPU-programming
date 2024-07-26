@@ -48,7 +48,7 @@ struct TotalEnergy : public ScalarMeasure {
             ScalarMeasure("total_energy", particles), kinetic_energy_{kinetic_energy},
             potential_energy_{potential_energy} {}
         double compute_value() const override {
-            return kinetic_energy_.get_value(values_.size()) + potential_energy_.get_value(values_.size());
+            return kinetic_energy_.get_value(values_.size() - 1) + potential_energy_.get_value(values_.size() - 1);
         }
 };
 

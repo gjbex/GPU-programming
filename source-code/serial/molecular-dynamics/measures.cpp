@@ -24,7 +24,7 @@ double PotentialEnergy::compute_value() const {
             energy += potential_energy(particles_.position(i), particles_.position(j));
         }
     }
-    return 2.0f*energy;
+    return energy;
 }
 
 position_t CenterOfMass::compute_value() const {
