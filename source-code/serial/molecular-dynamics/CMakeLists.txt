@@ -14,3 +14,8 @@ add_executable(molecular_dynamics.exe main.cpp)
 target_compile_options(molecular_dynamics.exe PRIVATE -Wall -Wextra -pedantic)
 target_link_libraries(molecular_dynamics.exe PRIVATE molecular_dynamis)
 target_link_libraries(molecular_dynamics.exe PRIVATE cli)
+
+add_executable(two_particles.exe two_particles.cpp)
+target_compile_options(two_particles.exe PRIVATE -Wall -Wextra -pedantic)
+target_link_libraries(two_particles.exe PRIVATE molecular_dynamis)
+target_link_libraries(two_particles.exe PRIVATE cli)
