@@ -1,0 +1,68 @@
+## Hello world {auto-animate="true"}
+
+```c++
+// include Kokkos header files
+
+int main(int argc, char* argv[]) {
+    // initialize Kokkos
+
+    // print in parallel
+
+    // finalize Kokkos
+    return 0;
+}
+```
+
+
+## Headers {auto-animate="true"}
+
+```c++
+#include <Kokkos_Core.hpp>
+
+int main(int argc, char* argv[]) {
+    // initialize Kokkos
+
+    // print in parallel
+
+    // finalize Kokkos
+    return 0;
+}
+```
+
+
+## Initialize/finalize {auto-animate="true"}
+
+```c++
+#include <Kokkos_Core.hpp>
+
+int main(int argc, char* argv[]) {
+    Kokkos::initialize(argc, argv);                           // <1>
+
+    // print in parallel
+
+    Kokkos::finalize();                                       // <2>
+    return 0;
+}
+```
+
+1. No Kokkos can be used before `Kokkos::initialize(...)`
+2. No Kokkos can be used after `Kokkos::finalize()`
+
+
+## Parallel for {auto-animate="true"}
+
+```c++
+#include <Kokkos_Core.hpp>
+
+int main(int argc, char* argv[]) {
+    Kokkos::initialize(argc, argv);
+3   Kokkos::parallel_for(15, KOKKOS_LAMBA(const int i) {    // <1>
+        Kokkos::printf("hello from i = %d\n", i);           // <2>
+    }
+    Kokkos::finalize();
+    return 0;
+}
+```
+
+1. `15`: number of iterations, lambda function to execute
+2. `i`: iteration-number from  `0` to `14`

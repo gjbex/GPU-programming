@@ -1,0 +1,30 @@
+# Kokkos
+
+## Pros
+
+- Vendor agnostic
+- Supports many backends
+  - Serial
+  - OpenMP
+  - CUDA
+  - HIP
+  - SYCL
+- Open source
+- Conceptually fairly straightforward
+
+
+## Cons
+
+- C++ only
+- Builds for specific targets
+
+
+## Main concepts
+
+- Memory spaces: place your data
+- Execution spaces: execute your code
+- Execution pattern: parallel constructs
+
+
+{{< include /kokkos/hello_world.qmd >}}
+{{< include /kokkos/views.qmd >}}

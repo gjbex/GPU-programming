@@ -9,13 +9,14 @@ The paradigms coverred are:
 
 - OpenMP offloading
 - OpenACC (To do)
-- Kokkos (To do)
+- Kokkos (WIP)
 - SYCL (To do)
 
 
 ## What is it?
 
 1. `source-code`: directory with source code for the training.
+1. `slides-source`: directory with Quarto code for the slides.
 1. `environmets`: directory with hpccm recipes to build containers for this
    training.
 1. `CONTRIBUTING.md`: guidelines for contributing to this repository.

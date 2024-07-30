@@ -1,0 +1,37 @@
+---
+title: "GPU programming"
+author: "[Geert Jan Bex](mailto:geertjan.bex@uhasselt.be)"
+institution: "Hasselt University"
+format:
+  revealjs:
+    transiton: slide
+    slide-number: true
+    incremental: true
+---
+
+## Motivation
+
+GPUs *can* offer significant speedup
+
+::: {.fragment .highlight-red}
+But:
+
+- programming GPUs is non-trivial
+- not all algorithms are suitable
+- code may not be portable
+:::
+
+## L'embarras du choix
+
+::: {.fragment .highlight-red}
+- CUDA (NVIDIA specific)
+- HIP (AMD specific)
+:::
+
+- OpenCL (cross-platform)
+- OpenMP (with GPU offloading)
+- OpenACC (with GPU offloading)
+- Kokkos (cross-platform)
+- SYCL (cross-platform)
+
+{{< include kokkos/kokkos.qmd >}}

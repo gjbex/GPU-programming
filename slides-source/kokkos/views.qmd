@@ -1,0 +1,33 @@
+## Kokkos views
+
+View = $N$-dimentional arrays
+
+- contains
+  - basic types (`int`, `float`, `double`,...)
+  - `struct` of basic types
+- in memory space of host or device
+- memory layout can be controled, sane defaults
+- managed by reference counting
+
+
+## Example views
+
+```c++
+  ...
+  Kokkos::View<double*> a("a", 10);                      // <1>
+  Kokkos::View<double[5]> b("b");                        // <2>
+  Kokkos::View<doucle**> c("c", 10, 15);                 // <3>
+  Kokkos::View<double*[20]> d("d", 10);                  // <4>
+  Kokkos::View<double[7][9]> e("e");                     // <5>
+  Kokkos::View<double***> f("f", 10, 10, 10);            // <6>
+  Kokkos::View<double*[13][17]> f("f", 10);              // <7>
+  ...
+```
+
+1. 1D array of 10 elements, runtime
+2. 1D array of 5 elements, compile time
+3. 2D array of 10x15 elements, runtime
+4. 2D array of 10x20 elements, rows runtime
+5. 2D array of 7x9 elements, compile time
+6. 3D array of 10x10x10 elements, runtime
+7. 3D array of 10x13x17 elements, first dimension runtime
