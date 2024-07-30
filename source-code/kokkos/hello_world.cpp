@@ -10,10 +10,10 @@ struct hello_world {
 };
 
 int main(int argc, char* argv[]) {
-  Kokkos::initialize(argc, argv);
-  std::cout << "Hello World on Kokkos execution space "
-      << typeid(Kokkos::DefaultExecutionSpace).name()
-      << std::endl;
-  Kokkos::parallel_for("HelloWorld", 15, hello_world());
-  Kokkos::finalize();
+    Kokkos::initialize(argc, argv);
+    std::cout << "Hello World on Kokkos execution space "
+        << typeid(Kokkos::DefaultExecutionSpace).name()
+        << std::endl;
+    Kokkos::parallel_for("HelloWorld", 15, hello_world());
+    Kokkos::finalize();
 }
