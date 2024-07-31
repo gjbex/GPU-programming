@@ -26,4 +26,5 @@ several backends such as OpenMP, CUDA, HIP, and SYCL.
    use of `Kokkos::MDRangePolicy`, running on CPU to benchmark speedup.
 1. `host_to_host_deepcopy.cpp`: illustration that deep copy of a mirror
    view is a no-op when the source and target are both on the host.
+1. `parallel_scan.cpp`: illustration of parallel scan.
 1. `CMakeLists.txt`: CMake file to build the applications.
