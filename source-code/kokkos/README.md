@@ -29,4 +29,5 @@ several backends such as OpenMP, CUDA, HIP, and SYCL.
 1. `parallel_scan.cpp`: illustration of parallel scan.
 1. `parallel_filter.cpp`: illustration of how to combine `Kokkos::parallel_for`
    and `Kokkos::parallel_scan` to filter elements of a view.
+1. `min_reductor.cpp`: illustration of using a `Kokkos::Min` reductor.
 1. `CMakeLists.txt`: CMake file to build the applications.
