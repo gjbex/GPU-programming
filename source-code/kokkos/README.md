@@ -20,14 +20,12 @@ several backends such as OpenMP, CUDA, HIP, and SYCL.
    `Kokkos::Random_X` classes.
 1. `matrix_vector.cpp`: matrix-vector multiplication illustrating the
    use of `Kokkos::Fence`.
-1. `matrix_matrix.cpp`: matrix-matrix multiplication illustrating the
-   use of `Kokkos::MDRangePolicy`.
-1. `matrix_matrix_cpu.cpp`: matrix-matrix multiplication illustrating the
-   use of `Kokkos::MDRangePolicy`, running on CPU to benchmark speedup.
 1. `host_to_host_deepcopy.cpp`: illustration that deep copy of a mirror
    view is a no-op when the source and target are both on the host.
 1. `parallel_scan.cpp`: illustration of parallel scan.
 1. `parallel_filter.cpp`: illustration of how to combine `Kokkos::parallel_for`
    and `Kokkos::parallel_scan` to filter elements of a view.
 1. `min_reductor.cpp`: illustration of using a `Kokkos::Min` reductor.
+1. `gemm`: matrix-matrix multiplication example, show the use of
+   `MDRangePolicy`.
 1. `CMakeLists.txt`: CMake file to build the applications.
