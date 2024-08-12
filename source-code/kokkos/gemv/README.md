@@ -13,5 +13,8 @@ a BLAS or equivalent.
 1. `matrix_vector_teams.cpp`: matrix-vector multiplication implemented as
    a two-level parallel loop, using `Kokkos::parallel_reduce` twice, once
    with a `Kokkos::TeamPolicy`, once with a Kokkos::TeamThreadRange`.
+1. `matrix_vector_teams_layout_right.cpp`: same as `matrix_vector_teams.cpp`,
+   but with the matrix stored in layout right which is not the default, but
+   more efficient for this case.
 1. `CMakeLists.txt`: CMake file to build the applications.
 
