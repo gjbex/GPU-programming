@@ -27,6 +27,8 @@ several backends such as OpenMP, CUDA, HIP, and SYCL.
 1. `min_reductor.cpp`: illustration of using a `Kokkos::Min` reductor.
 1. `teams.cpp`: illustration of using `Kokkos::TeamPolicy` to create
    teams of threads.
+1. `single.cpp`: illustration of using `Kokkos::single` to execute
+   code on a single thread.
 1. `gemv`: matrix-vector multiplication example, show the use of
    teams.
 1. `gemm`: matrix-matrix multiplication example, show the use of
