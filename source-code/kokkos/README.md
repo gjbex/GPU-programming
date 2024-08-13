@@ -25,6 +25,7 @@ several backends such as OpenMP, CUDA, HIP, and SYCL.
 1. `parallel_filter.cpp`: illustration of how to combine `Kokkos::parallel_for`
    and `Kokkos::parallel_scan` to filter elements of a view.
 1. `min_reductor.cpp`: illustration of using a `Kokkos::Min` reductor.
+1. `atomics.cpp`: illustration of using atomic operations to avoid race conditions.
 1. `teams.cpp`: illustration of using `Kokkos::TeamPolicy` to create
    teams of threads.
 1. `single.cpp`: illustration of using `Kokkos::single` to execute
