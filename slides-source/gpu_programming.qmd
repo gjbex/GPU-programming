@@ -6,7 +6,7 @@ format:
   revealjs:
     transiton: slide
     slide-number: true
-    incremental: true
+code-annotations: select
 ---
 
 ## Motivation
@@ -35,3 +35,86 @@ But:
 - SYCL (cross-platform)
 
 {{< include kokkos/kokkos.qmd >}}
+
+
+## Nested parallelism
+
+Challenge: how to divide the work?
+
+::: {.incremental .fragmet}
+- Use `Kokkos::TeamPolicy`
+  - League: set of teams
+  - Team: set of threads
+- Use execution patterns for, reduce, scan
+- Threads in team synchronize with `Kokkos::TeamThread::fence()`
+- Team can share scratch memory
+:::
+
+
+## Example 1: $\vec{y} = A \cdot \vec{x}$
+
+$\vec{y} = A \cdot \vec{x}$ where $\vec{y} \in \mathbb{R}^M$,
+$A \in \mathbb{R}^{M \times N}$, $\vec{x} \in \mathbb{R}^N$ 
+
+```{.cpp .fragment}
+Kokkos::parallel_for("y=A*x", M,
+    KOKKOS_LAMBDA(const int i) {
+        for (int j = 0; j < N; ++j) {
+            y(i) = A(i, j)*x(j);
+        }
+    });
+```
+
+::::: {.columns}
+:::: {.column width=70%}
+```{.cpp .fragment}
+Kokkos::parallel_for("y=A*x",
+    Kokkos::TeamPolicy<>(M, Kokkos::AUTO),       // <1>
+    KOKKOS_LAMBDA(int i) {
+        double row_sum = 0;
+        Kokkos::parallel_reduce("y(i)"           // <2>
+            Kokkos::TeamThreadRange(team, N),
+            [=] (int j, double& lsum) {
+                lsum += A(i,j)*x(j);
+            }, row_sum);
+        y(i) = row_sum;
+});
+```
+
+1. Create league of teams of threads
+2. Exploit inner parallelism
+::::
+:::: {.column width=30%}
+::: {.fragment}
+Better performance for $M \ll N$
+:::
+::::
+:::::
+
+
+## Example 2: $s = \vec{y} \cdot A \cdot \vec{x}$
+
+$s = \vec{y} \cdot A \cdot \vec{x}$ where $s \in \mathbb{R}$,
+$\vec{y} \in \mathbb{R}^M$, $A \in \mathbb{R}^{M \times N}$,
+$\vec{x} \in \mathbb{R}^N$ 
+
+```{.cpp .fragmet}
+using policy_t = Kokkos::TeamPolicy<>;
+float s {0.0f};
+Kokkos::parallel_reduce("y*A*x", policy_t(M, Kokkos::AUTO),
+    KOKKOS_LAMBDA(const policy_t::member_type& team_member, float& sum) {
+        const int i {team_member.league_rank()};
+        float row_sum {0.0f};
+        Kokkos::parallel_reduce(
+            Kokkos::TeamThreadRange(team_member, N),
+            [=] (const int j, float& row_sum) {
+                row_sum += A(i, j)*x(j);                                        // <1>
+            }, row_sum);
+        if (team_member.team_rank() == 0) {                                     // <2>
+            sum += y(i)*row_sum;
+        }
+    }, s);
+```
+
+1. Note: *A* is accessed row-wise!
+2. only one thread should update!
