@@ -3,10 +3,8 @@
 #include <typeinfo>
 
 int main(int argc, char* argv[]) {
-    Kokkos::initialize(argc, argv);
-    std::cout << "Hello World on Kokkos execution space "
-        << typeid(Kokkos::DefaultExecutionSpace).name()
-        << std::endl;
-    Kokkos::finalize();
+  Kokkos::initialize(argc, argv);
+  std::cout << "Hello World on Kokkos execution space "
+            << typeid(Kokkos::DefaultExecutionSpace).name() << std::endl;
+  Kokkos::finalize();
 }
-
