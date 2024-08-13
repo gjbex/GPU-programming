@@ -20,7 +20,8 @@ int main(int argc, char *argv[]) {
                         thread.team_rank(), thread.team_size());
                 });
         Kokkos::fence();
-        std::cout << "parallel_for over league members, parallel_for of team members over loop of size " << loop_size << std::endl;
+        std::cout << "parallel_for over league members, parallel_for of team members over loop of size "
+            << loop_size << std::endl;
         Kokkos::parallel_for(policy, KOKKOS_LAMBDA(const member_t& thread) {
                 Kokkos::parallel_for(Kokkos::TeamThreadRange(thread, loop_size), [=] (const int i) {
                         Kokkos::printf("League rank %d out of %d, thread rank %d out of %d: %d\n",
@@ -30,7 +31,34 @@ int main(int argc, char *argv[]) {
                         });
                 });
         Kokkos::fence();
-        std::cout << "parallel_for over league members, parallel_reduce of team members over loop of size " << loop_size << std::endl;
+        std::cout << "parallel_for over league members, parallel_for of team members and vectors over loop of size "
+            << loop_size << std::endl;
+        Kokkos::parallel_for(policy, KOKKOS_LAMBDA(const member_t& thread) {
+                Kokkos::parallel_for(Kokkos::TeamThreadRange(thread, loop_size), [=] (const int i) {
+                        Kokkos::parallel_for(Kokkos::ThreadVectorRange(thread, loop_size), [=] (const int j) {
+                                Kokkos::printf("League rank %d out of %d, thread rank %d out of %d: %d, %d\n",
+                                        thread.league_rank(), thread.league_size(),
+                                        thread.team_rank(), thread.team_size(),
+                                        i, j);
+                                });
+                        });
+                });
+        Kokkos::fence();
+        std::cout << "parallel_for over league members, parallel_reduce of team members over loop of size "
+            << loop_size << std::endl;
+        Kokkos::parallel_for(policy, KOKKOS_LAMBDA(const member_t& thread) {
+                int sum {0};
+                Kokkos::parallel_reduce(Kokkos::TeamThreadRange(thread, loop_size), [=] (const int i, int& lsum) {
+                        lsum += i;
+                        }, sum);
+                Kokkos::printf("League rank %d out of %d, thread rank %d out of %d: %d\n",
+                        thread.league_rank(), thread.league_size(),
+                        thread.team_rank(), thread.team_size(),
+                        sum);
+                });
+        Kokkos::fence();
+        std::cout << "parallel_for over league members, parallel_reduce of team members over loop of size "
+            << loop_size << std::endl;
         Kokkos::parallel_for(policy, KOKKOS_LAMBDA(const member_t& thread) {
                 int sum {0};
                 Kokkos::parallel_reduce(Kokkos::TeamThreadRange(thread, loop_size), [=] (const int i, int& lsum) {
