@@ -6,6 +6,6 @@ repos:
     args: [--style=Google]
     files: '\.(c|cc|cpp|h|hpp|cxx|hh)$'
 - repo: https://github.com/pocc/pre-commit-hooks
-  rev: master
+  rev: v1.3.5
   hooks:
     - id: cppcheck
