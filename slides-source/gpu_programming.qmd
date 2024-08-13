@@ -107,14 +107,15 @@ Kokkos::parallel_reduce("y*A*x", policy_t(M, Kokkos::AUTO),
         float row_sum {0.0f};
         Kokkos::parallel_reduce(
             Kokkos::TeamThreadRange(team_member, N),
-            [=] (const int j, float& row_sum) {
-                row_sum += A(i, j)*x(j);                                        // <1>
+            [=] (const int j, float& row_sum) {                                 // <1>
+                row_sum += A(i, j)*x(j);                                        // <2>
             }, row_sum);
-        if (team_member.team_rank() == 0) {                                     // <2>
-            sum += y(i)*row_sum;
-        }
+        Kokkos::single(Kokkos::PerTeam(team_member),                            // <3>
+            [&]() { result += y(i)*row_sum; });                                 // <4>
     }, s);
 ```
 
-1. Note: *A* is accessed row-wise!
-2. only one thread should update!
+1. Note: capture by value
+2. Note: *A* is accessed row-wise!
+3. Only one thread per team should update!
+4. Note: capture by reference

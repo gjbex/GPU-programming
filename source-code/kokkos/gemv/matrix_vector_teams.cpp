@@ -34,9 +34,8 @@ int main(int argc, char* argv[]) {
               Kokkos::TeamThreadRange(team_member, N),
               [=](const int j, float& row_sum) { row_sum += A(i, j) * x(j); },
               row_sum);
-          if (team_member.team_rank() == 0) {
-            result += y(i) * row_sum;
-          }
+          Kokkos::single(Kokkos::PerTeam(team_member),
+                         [&]() { result += y(i) * row_sum; });
         },
         result);
     Kokkos::fence();
