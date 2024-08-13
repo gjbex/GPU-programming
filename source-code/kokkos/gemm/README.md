@@ -10,4 +10,6 @@ a BLAS or equivalent.
    use of `Kokkos::MDRangePolicy`.
 1. `matrix_matrix_cpu.cpp`: matrix-matrix multiplication illustrating the
    use of `Kokkos::MDRangePolicy`, running on CPU to benchmark speedup.
+1. `matrix_matrix_teams.cpp`: matrix-matrix multiplication illustrating the
+   use of `Kokkos::TeamPolicy`.
 1. `CMakeLists.txt`: CMake file to build the applications.
