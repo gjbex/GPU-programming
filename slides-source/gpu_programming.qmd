@@ -41,20 +41,30 @@ But:
 
 Challenge: how to divide the work?
 
-::: {.incremental .fragmet}
+::: {.incremental .fragment}
 - Use `Kokkos::TeamPolicy`
   - League: set of teams
-  - Team: set of threads
+  - Team: set of threads (warp on NVIDIA/wavefront on AMD)
 - Use execution patterns for, reduce, scan
 - Threads in team synchronize with `Kokkos::TeamThread::fence()`
-- Team can share scratch memory
+- Team can share scratch pad memory
+- Threads can have private scratch pad
 :::
 
 
+## Nested execution policies
+
+- Top-level: `TeamPolicy`
+- Next level
+  - `TeamThreadRange`, `TeamThreadMDRange`
+  - `TeamVectorRange`, `TeamVectorMDRange`
+  - `ThreadVectorRange`, `ThreadVectorMDRange`
+  
+
 ## Example 1: $\vec{y} = A \cdot \vec{x}$
 
-$\vec{y} = A \cdot \vec{x}$ where $\vec{y} \in \mathbb{R}^M$,
-$A \in \mathbb{R}^{M \times N}$, $\vec{x} \in \mathbb{R}^N$ 
+Where $\vec{y} \in \mathbb{R}^M$, $A \in \mathbb{R}^{M \times N}$, $\vec{x} \in
+\mathbb{R}^N$ 
 
 ```{.cpp .fragment}
 Kokkos::parallel_for("y=A*x", M,
@@ -94,9 +104,8 @@ Better performance for $M \ll N$
 
 ## Example 2: $s = \vec{y} \cdot A \cdot \vec{x}$
 
-$s = \vec{y} \cdot A \cdot \vec{x}$ where $s \in \mathbb{R}$,
-$\vec{y} \in \mathbb{R}^M$, $A \in \mathbb{R}^{M \times N}$,
-$\vec{x} \in \mathbb{R}^N$ 
+Where $s \in \mathbb{R}$, $\vec{y} \in \mathbb{R}^M$, $A \in \mathbb{R}^{M
+\times N}$, $\vec{x} \in \mathbb{R}^N$ 
 
 ```{.cpp .fragmet}
 using policy_t = Kokkos::TeamPolicy<>;
@@ -119,3 +128,28 @@ Kokkos::parallel_reduce("y*A*x", policy_t(M, Kokkos::AUTO),
 2. Note: *A* is accessed row-wise!
 3. Only one thread per team should update!
 4. Note: capture by reference
+
+
+## Scratch pads
+
+::::: {.columns}
+:::: {.column width=40%}
+- Level-0
+  - Limited size, fast
+  - "Manual L1 cache"
+- Level-1
+  - Larger, but less performance
+  - "Nearest fast storage"
+::::
+:::: {.column width=60% .fragment}
+- Team or thread private memory
+  - Per work item temp storage
+  - Size $\propto$ nr. threads
+- Manually managed cache
+  - Cache frequently used data
+  - exposes on-core scratch space (e.g., NVIDIA GPU shared memory)
+::::
+:::::
+
+
+## How to configure?
