@@ -28,3 +28,4 @@
 
 {{< include /kokkos/hello_world.qmd >}}
 {{< include /kokkos/views.qmd >}}
+{{< include /kokkos/execution_patterns.qmd >}}

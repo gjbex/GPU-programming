@@ -1,0 +1,180 @@
+## Execution patterns
+
+::: {.fragment}
+Parallel for:
+```c++
+Kokkos::parallel_for(10, KOKKOS_LAMBDA(int i) {
+        a(i) = i;
+    });
+```
+:::
+
+::: {.fragment}
+Parallel reduce:
+```c++
+double sum {0.0};
+Kokkos::parallel_reduce(10, KOKKOS_LAMBDA(int i, double& sum) {
+        sum += a(i);
+    }, sum);
+```
+:::
+
+::: {.fragment}
+Parallel scan:
+```c++
+Kokkos::parallel_scan(10, KOKKOS_LAMBDA(int i, double& update, bool final) {
+        update += a(i);
+        if (final) a(i) = update;
+    });
+```
+:::
+
+
+## Execution policies
+
+::: {.fragment}
+`Kokkos::RangePolicy` = range of indices
+```c++
+Kokkos::parallel_for(Kokkos::RangePolicy(0, 10),
+    KOKKOS_LAMBDA(int i) {
+        a(i) = i;
+    });
+```
+:::
+
+::: {.fragment}
+`Kokkos::MDRangePolicy` = multi-dimensional range
+```c++
+Kokkos::parallel_for(
+    Kokkos::MDRangePolicy<Kokkos::Rank<2>>({0, 0}, {10, 15}),
+    KOKKOS_LAMBDA(int i, int j) {
+        a(i, j) = i + j;
+    });
+```
+:::
+
+
+## Tiling
+
+Both can be defined with chunk size
+
+::: {.fragment}
+```c++
+Kokkos::parallel_for(Kokkos::RangePolicy(0, 10, 2),
+    KOKKOS_LAMBDA(int i) {
+        a(i) = i;
+    });
+```
+:::
+
+::: {.fragment}
+```c++  
+Kokkos::parallel_for(
+    Kokkos::MDRangePolicy( {0, 0}, {10, 15}, {2, 3}),
+    KOKKOS_LAMBDA(int i, int j) {
+        a(i, j) = i + j;
+    });
+```
+:::
+
+
+## Execution spaces
+
+1. `Kokkos::Cuda` = parallel execution on CUDA device
+1. `Kokkos::Hip` = parallel execution on HIP device
+1. `Kokkos::OpenMP` = parallel execution on host
+1. `Kokkos::Serial` = serial execution on host
+
+::: {.fragment}
+Default execution space: highest enabled at compile time
+:::
+
+- `Kokkos::DefaultExecutionSpace` = default execution space
+- `Kokkos::DefaultHostExecutionSpace` = default host execution space
+
+
+## Using execution spaces
+
+```c++
+  Kokkos::View<int*, Kokkos::HostSpace> a("a", 10);
+  Kokkos::parallel_for(Kokkos::RangePolicy<Kokkos::OpenMP>(0, 10),
+      KOKKOS_LAMBDA(int i) {
+          a(i) = i;
+  });
+```
+
+
+## Functors
+
+- Can be used instead of lambdas
+- For more complex operations
+- Can be reused
+- Can be templated
+- Have to implement some methods
+
+
+## Functor for parallel for
+
+```c++  
+struct MyFunctor {
+    private:
+        Kokkos::View<double*> a_;                                // <1>
+    public:
+        explicit MyFunctor(Kokkos::View<double*> a_) : a(a_) {}  // <2>
+        KOKKOS_INLINE_FUNCTION
+        void operator()(const int i) const {                     // <3>
+            a(i) = i;
+        }
+};
+```
+
+1. View(s) to operator on
+2. Constructor that takes view(s), initializes state
+3. `operator()` that does the work, cfr. lambda function
+
+
+## Using parallel for functor
+
+```c++
+Kokkos::View<double*> a("a", 10);
+Kokkos::View<double*> b("b", 10);
+MyFunctor my_functor(a);                            // <1>
+Kokkos::parallel_for(10, my_functor);
+Kokkos::parallel_for(10, MyFunctor(b));             // <2>
+```
+
+1. Create functor with view `a` to be used multiple times
+2. Create functor with view `b` and use it directly
+
+
+## Functor for parallel reduce
+
+```c++  
+struct MyReduceFunctor {
+    private:
+        Kokkos::View<double*> a_;
+    public:
+        explicit MyReduceFunctor(Kokkos::View<double*> a_) : a(a_) {}
+        KOKKOS_INLINE_FUNCTION
+        void operator()(const int i, double& sum) const {                // <1>
+            sum += a(i);
+        }
+        KOKKOS_INLINE_FUNCTION
+        void join(double& dst, const double& src) const {                // <2>
+            dst += src;
+        }
+};
+```
+
+1. `operator()` with accumulator
+2. `join()` to combine partial results
+
+
+## Using parallel reduce functor
+
+```c++  
+Kokkos::View<double*> a("a", 10);
+double sum {0.0};
+MyReduceFunctor my_reduce_functor(a);
+Kokkos::parallel_reduce(10, my_reduce_functor, sum);
+```
