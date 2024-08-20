@@ -16,26 +16,38 @@ int main(int argc, char* argv[]) {
     // Create C
     Kokkos::View<double**> C("C", nr_elements, nr_qp);
 
-    // Compute C = A * B
-    Kokkos::TeamPolicy<> policy(nr_elements, Kokkos::AUTO);
+    // Define scratch view type
     using ScratchView =
         Kokkos::View<double*,
                      Kokkos::DefaultExecutionSpace::scratch_memory_space>;
+
+    // Compute the size of the scratch memory, takes into account alignment
     size_t scratch_size = ScratchView::shmem_size(vector_size);
+
+    // Define the scratch level
     const int level{0};
+
+    // Define the team policy
+    Kokkos::TeamPolicy<> policy(nr_elements, Kokkos::AUTO);
+
+    // Compute C = A * B
     Kokkos::parallel_for(
         "C=A*B", policy.set_scratch_size(level, Kokkos::PerTeam(scratch_size)),
         KOKKOS_LAMBDA(const Kokkos::TeamPolicy<>::member_type& team) {
           const int element{team.league_rank()};
+          // Create scratch view
           ScratchView scratch(team.team_scratch(level), vector_size);
+          // Copy row of B to scratch
           Kokkos::parallel_for(
               Kokkos::TeamVectorRange(team, vector_size),
               [&](const int& i) { scratch(i) = B(element, i); });
+          // Barrier to make sure all threads have copied the row of B
           team.team_barrier();
           Kokkos::parallel_for(Kokkos::TeamThreadRange(team, nr_qp),
                                [&](const int& qp) {
                                  double total{0.0};
                                  for (int i = 0; i < vector_size; ++i) {
+                                   // Use scratch view to avoid multiple loads
                                    total += A(element, qp, i) * scratch(i);
                                  }
                                  C(element, qp) = total;
