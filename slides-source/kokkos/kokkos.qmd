@@ -29,5 +29,5 @@
 {{< include /kokkos/hello_world.qmd >}}
 {{< include /kokkos/views.qmd >}}
 {{< include /kokkos/execution_patterns.qmd >}}
-
+{{< include /kokkos/teams.qmd >}}
 {{< include /kokkos/references.qmd >}}
