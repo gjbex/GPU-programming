@@ -33,6 +33,7 @@ if(ENABLE_PROFILING)
 endif()
 
 find_package(Boost REQUIRED COMPONENTS program_options)
+find_package(Armadillo)
 
 file(GLOB src_files  "${CMAKE_CURRENT_SOURCE_DIR}/*.c")
 foreach(src_file ${src_files})
@@ -52,4 +53,5 @@ foreach(src_file ${src_files})
     target_include_directories(${executable_name} PRIVATE ${Boost_INCLUDE_DIRS})
 endforeach()
 
+add_subdirectory(contract_data_field_scalar)
 add_subdirectory(molecular-dynamics)
