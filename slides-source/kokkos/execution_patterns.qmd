@@ -178,3 +178,14 @@ double sum {0.0};
 MyReduceFunctor my_reduce_functor(a);
 Kokkos::parallel_reduce(10, my_reduce_functor, sum);
 ```
+
+
+## Synchorization
+
+- `Kokkos::parallel_for`, `Kokkos::parallel_scan`: asynchronous (non-blocking)
+- `Kokkos::parallel_reduce`: asynchronous with `Kokkos::View`, blocking with scalar
+- Execution space has its own FIFO queue
+- `Kokkos::deep_copy(dest, src)`: blocking copy
+- `Kokkos::deep_copy(exec_space, dest, src)`: inserted in FIFO queue
+- `Kokkos::fence()` = wait for all parallel operations to finish
+- `exec_space.fence()` = wait for all parallel operations on `exec_space` to finish
