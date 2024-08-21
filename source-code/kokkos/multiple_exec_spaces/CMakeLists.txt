@@ -1,13 +1,3 @@
-cmake_minimum_required(VERSION 3.20)
-
-project(kokkos LANGUAGES CXX)
-
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
-
-find_package(Kokkos REQUIRED)
-
 file(GLOB src_files  "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp")
 foreach(src_file ${src_files})
     get_filename_component(base_name ${src_file} NAME_WE)
@@ -17,8 +7,3 @@ foreach(src_file ${src_files})
     target_link_libraries(${executable_name} Kokkos::kokkos)
     target_compile_options(${executable_name} PRIVATE -Wall -Wextra -pedantic -Werror)
 endforeach()
-
-add_subdirectory(gemv)
-add_subdirectory(gemm)
-add_subdirectory(scratch)
-add_subdirectory(multiple_exec_spaces)
