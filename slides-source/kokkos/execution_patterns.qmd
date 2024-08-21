@@ -238,3 +238,13 @@ This uses CUDA streams under the hood.
 ## Execution space deep copy
 
 ![](/kokkos/img/async_deep_copy.png){fig-alt="Asynchronous `Kokkos::deep_copy(exec_space, dest, src)`"}
+
+
+## Synchorization gotchas
+
+- `Kokkos::deep_copy(dest, src)` blcoks *all* execution spaces
+- `Kokkos::fence()` blocks *all* execution spaces
+- `Kokkos::parallel_reduce` with scalar blocks process
+- `Kokkos::View` that goes out of scopy may block
+- Execution space `Kokkos::OpenMP` may block
+- Only one instance of `Kokkos::OpenMP` execution space
