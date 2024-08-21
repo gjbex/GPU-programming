@@ -8,6 +8,8 @@ several backends such as OpenMP, CUDA, HIP, and SYCL.
 
 1. `device.cpp`: simple application displaying the default execution
    space.
+1. `exec_space_info.cpp`: simple application displaying the default
+   execution space and default host execution space configuration.
 1. `hello_world.cpp`: very simple application illustrating a
    `Kokkos::paralle_for` using a functor.
 1. `hello_world_lambdas.cpp`: very simple application illustrating a
