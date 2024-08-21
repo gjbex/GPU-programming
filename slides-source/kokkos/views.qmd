@@ -81,6 +81,18 @@ Default "best" for memory space, parallel access over leftmost index
 - Right for host memory space: cache-friendly access
 
 
+## Deep copy
+
+- Copy data between views
+- Bit copy, no conversion
+  - views must have the same layout and padding
+- Execution space can be specified
+
+::: {.callout-warning .fragment}
+`Kokkos::deep_copy` between different memory spaces may not work
+:::
+
+
 ## Mirror views
 
 Required for, e.g.,
