@@ -189,3 +189,52 @@ Kokkos::parallel_reduce(10, my_reduce_functor, sum);
 - `Kokkos::deep_copy(exec_space, dest, src)`: inserted in FIFO queue
 - `Kokkos::fence()` = wait for all parallel operations to finish
 - `exec_space.fence()` = wait for all parallel operations on `exec_space` to finish
+
+
+## Multiple parallel for
+
+![](/kokkos/img/async_parallel_for.png){fig-alt="Multiple parallel for"}
+
+
+## Multiple parallel for blocked
+
+![](/kokkos/img/async_parallel_for_blocked.png){fig-alt="Parallel for blocked by process"}
+
+
+## Parallel reduce on process scalar
+
+![](/kokkos/img/parallel_reduce_on_scalar.png){fig-alt="Parallel reduce on process scalar"}
+
+
+## Parallel reduce on `Kokkos::View`
+
+![](/kokkos/img/parallel_reduce_on_view.png){fig-alt="Parallel reduce on `Kokkos::View`"}
+
+
+## Deep copy
+
+![](/kokkos/img/blocking_deep_copy.png){fig-alt="`Kokkos::deep_copy(dest, src) blocks"}
+
+
+## Host and device execution space
+
+![](/kokkos/img/openmp_kernel.png){fig-alt="Using both host and device execution spaces"}
+
+
+## Deep copy issue
+
+![](/kokkos/img/deep_copy_sync_issue.png){fig-alt="`Kokkos::deep_copy(dest, src)` issue"}
+
+
+## Multiple execution spaces
+
+![](/kokkos/img/multiple_exec_spaces.png){fig-alt="Using multiple execution spaces on device"}
+
+::: notes
+This uses CUDA streams under the hood.
+:::
+
+
+## Execution space deep copy
+
+![](/kokkos/img/async_deep_copy.png){fig-alt="Asynchronous `Kokkos::deep_copy(exec_space, dest, src)`"}
