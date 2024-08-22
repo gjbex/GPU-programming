@@ -103,6 +103,32 @@ Data scope is scope of `#pragma omp target teams loop`
 - `#pragma omp target` selects a device
 - Default device is GPU:0 if there is one, CPU otherwise
 - `device` clause allows to explicitly select device
+- `omp_get_num_devices()`, `omp_get_default_device()`
+- Devices numbered from 0 to `omp_get_num_devices() - 1`
+
+
+## Creating teams
+
+- `#pragma omp teams` directive
+- Creates league of teams
+- Teams have threads as members
+- `num_teams` clause to set size of league
+- `thread_limit` clause to set maximum team size
+- All threads in all teams execute code
+
+
+## Work sharing
+
+- `#pragma omp loop`
+  - Simple
+  - Portable
+- `#pragma omp distributed parallel for`
+  - More control for fine-tuning
+  - Parallel region may cause overhead
+
+::: {.callout-warning .fragment}
+Do not forget `distributed`!
+:::
 
 
 ## Moving data around
