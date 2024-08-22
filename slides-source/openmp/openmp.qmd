@@ -1,0 +1,142 @@
+# OpenMP
+
+
+## Introduction
+
+- OpenMP for shared memory programming
+- OpenMP 4.5+ offloading to accelarators
+- Annotate code with directives
+  - `#pragma omp ...` for C/C++
+  - `!$omp ...` for Fotran
+- Runtime library
+- Environment variables
+
+
+## PenMP pros
+
+- Gradual path to parallel code
+- Implemented by
+  - GCC
+  - Intel OneAPI
+  - Clang
+  - NVIDIA
+- Conceptually fairly easy
+
+
+## Cons
+
+- Efficient code not so easy
+- OpenMP 5.x not fully supported
+
+
+## Hello world
+
+```c++
+float *vecA = (float *) malloc(N*sizeof(float));                                // <1)
+float *vecB = (float *) malloc(N*sizeof(float));
+float *vecC = (float *) malloc(N*sizeof(float));
+...
+#pragma omp target teams loop map(to:vecA[:N], vecB[:N]) map(tofrom:vecC[:N])   // <2>
+    for (int i = 0; i < N; i++) {
+        for (int j = 0; j < n; j++) {
+            vecC[i] += vecA[i]*vecB[i];                                         // <3>
+        }
+    }
+```
+
+1. Allocate and initialize data on host
+2. Move `A` and `B` to device, move `C` to device and back to host at end of `target` region
+3. Kernel executing on device
+
+::: {.callout-warning .fragment}
+Data scope is scope of `#pragma omp target teams loop`
+:::
+
+
+## Moving data around
+
+- Move data explicitely `to`, `from`, `tofrom`
+  - As part of `#pragma omp target teams loop`
+  - Structured
+  - Unstructured
+- Allocate data on device
+
+::: {.fragment}
+Specify slice to copy: `array[<begin>:<end>], `<end>` not included
+:::
+
+::: {.fragment}
+Shortcut: `array[:<end>]`
+:::
+
+
+
+## Structured data region
+
+```c++
+float *vecA = (float *) malloc(N*sizeof(float));                                // <1)
+float *vecB = (float *) malloc(N*sizeof(float));
+float *vecC = (float *) malloc(N*sizeof(float));
+...
+#pragma omp target data map(to: vecA[:N], vecB[:N]) map(tofrom:: vecC[:N])  // <1>
+{
+    ...
+}                                                                           // <2>
+```
+
+1. Data `A`, `B`, `C` copied to device at start of scope
+2. Data `C` copied back to host at end of scope
+
+- Can be nested
+- Can *not* overlap
+
+
+## Unstructured data region
+
+```c++
+float *a = (float *) malloc(n*n*sizeof(float));
+...
+#pragma omp target enter data map(to:a[0:n*n])              // <1>
+...
+#pragma omp target exit data map(from:a[0:n*n])             // <2>
+```
+
+1. Enter data region for `a`, copy to device
+2. Exit data region for `a`, copy back to host
+
+- Can be nested
+- Can overlap
+- Can update
+  ```c
+  #pragma omp target update from(a[0:n*n])
+  ```
+
+
+
+## Allocate on device
+
+OpenMP function
+
+```c
+#include <omp.h>                                                                       // <1>
+...
+float *b = (float *) omp_target_alloc(n*n*sizeof(float), omp_get_default_device());    // <2>
+#pragma omp target teams distribute parallel for is_device_ptr(b)                      // <3>
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            b[i*n + j] = ((float) (i*n + j))/(n*n);
+        }
+    }
+...
+omp_target_free(b, omp_get_default_device());                                          // <4>
+
+```
+
+1. `omp_target_alloc` and `omp_target_free` are declared in `omp.h`
+2. Allocation on device
+3. Declare `b` as pointer to data on device
+4. Free `b`
+
+::: {.callout-tip .fragment}
+No data movements!
+:::
