@@ -112,9 +112,11 @@ Data scope is scope of `#pragma omp target teams loop`
 - `#pragma omp teams` directive
 - Creates league of teams
 - Teams have threads as members
-- `num_teams` clause to set size of league
+- `num_teams` clause to set maximum size of league
 - `thread_limit` clause to set maximum team size
-- All threads in all teams execute code
+- One thread per team outside of parallel region or `loop`
+- Threads in team can synchronize
+- Teams don't synchronize
 
 
 ## Work sharing
