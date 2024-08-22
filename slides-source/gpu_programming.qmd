@@ -35,4 +35,5 @@ But:
 - SYCL (cross-platform)
 
 
+{{< include /openmp/openmp.qmd >}}
 {{< include kokkos/kokkos.qmd >}}
