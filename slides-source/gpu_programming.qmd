@@ -77,14 +77,14 @@ Familarity with C-type raw pointers helps (a lot)
 ## Hello world
 
 ```c
-float *vecA = (float *) malloc(N*sizeof(float));                                // <1)
-float *vecB = (float *) malloc(N*sizeof(float));
-float *vecC = (float *) malloc(N*sizeof(float));
+float *A = (float *) malloc(N*sizeof(float));                          /* <1> */
+float *B = (float *) malloc(N*sizeof(float));
+float *C = (float *) malloc(N*sizeof(float));
 ...
-#pragma omp target teams loop map(to:vecA[:N], vecB[:N]) map(tofrom:vecC[:N])   // <2>
+#pragma omp target teams loop map(to:A[:N], B[:N]) map(tofrom:C[:N])   /* <2> */
     for (int i = 0; i < N; i++) {
         for (int j = 0; j < n; j++) {
-            vecC[i] += vecA[i]*vecB[i];                                         // <3>
+            C[i] += A[i]*B[i];                                         /* <3> */
         }
     }
 ```
@@ -135,8 +135,8 @@ Do not forget `distributed`!
 
 - Move data explicitely `to`, `from`, `tofrom`
   - As part of `#pragma omp target teams loop`
-  - Structured
-  - Unstructured
+  - Structured data region
+  - Unstructured data region
 - Allocate data on device
 
 ::: {.fragment}
@@ -148,22 +148,22 @@ Shortcut: `array[:<end>]`
 :::
 
 
-
 ## Structured data region
 
 ```c
-float *vecA = (float *) malloc(N*sizeof(float));                                // <1)
+float *vecA = (float *) malloc(N*sizeof(float));                            /* <1> */
 float *vecB = (float *) malloc(N*sizeof(float));
 float *vecC = (float *) malloc(N*sizeof(float));
 ...
-#pragma omp target data map(to: vecA[:N], vecB[:N]) map(tofrom:: vecC[:N])  // <1>
+#pragma omp target data map(to: vecA[:N], vecB[:N]) map(tofrom:: vecC[:N])  /* <2> */
 {
     ...
-}                                                                           // <2>
+}                                                                           /* <3> */
 ```
 
-1. Data `A`, `B`, `C` copied to device at start of scope
-2. Data `C` copied back to host at end of scope
+1. Data `A`, `B`, `C` allocated on host
+2. Data `A`, `B`, `C` copied to device at start of scope
+3. Data `C` copied back to host at end of scope
 
 - Can be nested
 - Can *not* overlap
@@ -174,9 +174,9 @@ float *vecC = (float *) malloc(N*sizeof(float));
 ```c
 float *a = (float *) malloc(n*n*sizeof(float));
 ...
-#pragma omp target enter data map(to:a[0:n*n])              // <1>
+#pragma omp target enter data map(to:a[0:n*n])              /* <1> */
 ...
-#pragma omp target exit data map(from:a[0:n*n])             // <2>
+#pragma omp target exit data map(from:a[0:n*n])             /* <2> */
 ```
 
 1. Enter data region for `a`, copy to device
@@ -190,24 +190,22 @@ float *a = (float *) malloc(n*n*sizeof(float));
   ```
 
 
-
 ## Allocate on device
 
 OpenMP function
 
 ```c
-#include <omp.h>                                                                       // <1>
+#include <omp.h>                                                                       /* <1> */
 ...
-float *b = (float *) omp_target_alloc(n*n*sizeof(float), omp_get_default_device());    // <2>
-#pragma omp target teams distribute parallel for is_device_ptr(b)                      // <3>
+float *b = (float *) omp_target_alloc(n*n*sizeof(float), omp_get_default_device());    /* <2> */
+#pragma omp target teams distribute parallel for is_device_ptr(b)                      /* <3> */
     for (int i = 0; i < n; i++) {
         for (int j = 0; j < n; j++) {
             b[i*n + j] = ((float) (i*n + j))/(n*n);
         }
     }
 ...
-omp_target_free(b, omp_get_default_device());                                          // <4>
-
+omp_target_free(b, omp_get_default_device());                                          /* <4> */
 ```
 
 1. `omp_target_alloc` and `omp_target_free` are declared in `omp.h`
