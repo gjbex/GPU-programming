@@ -17,6 +17,11 @@ HPC SDK](https://developer.nvidia.com/hpc-sdk) is used.
    on the GPU.
 1. `vector_product_cpu.c`: application that computes a vector product
    on the CPU.
+1. `vector_product_parallel_for_gpu.c`: application that computes a
+   vector product on the GPU using a `parallel for` construct.
+1. `vector_product_no_distribute_gpu.c`: application that computes a
+   vector product on the GPU using a `parallel for` construct, but
+   without the `distribute` clause.
 1. `vector_product_2_gpu.c`: application that computes a vector product
    on the GPU, initialization and reduction also done on GPU.
 1. `vector_product_2_cpu.c`: application that computes a vector product
