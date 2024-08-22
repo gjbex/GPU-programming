@@ -33,3 +33,5 @@ But:
 - OpenACC (with GPU offloading)
 - Kokkos (cross-platform)
 - SYCL (cross-platform)
+
+{{< include /openmp/openmp.qmd >}}
