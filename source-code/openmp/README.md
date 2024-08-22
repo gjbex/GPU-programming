@@ -13,6 +13,10 @@ HPC SDK](https://developer.nvidia.com/hpc-sdk) is used.
    GPU devices (useful to test succesful build).
 1. `hello_world_gpu.c`: application that checks the number of threads
    and teams on the device.
+1. `teams_gpu.c`: application that checks the number of teams on the
+   device, and the number of threads in a team.
+1. `teams_cpu.c`: application that checks the number of teams on the
+   device, and the number of threads in a team.
 1. `vector_product_gpu.c`: application that computes a vector product
    on the GPU.
 1. `vector_product_cpu.c`: application that computes a vector product
