@@ -12,7 +12,7 @@
 - Environment variables
 
 
-## PenMP pros
+## Pros
 
 - Gradual path to parallel code
 - Implemented by
