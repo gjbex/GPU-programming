@@ -17,8 +17,16 @@ HPC SDK](https://developer.nvidia.com/hpc-sdk) is used.
    on the GPU.
 1. `vector_product_cpu.c`: application that computes a vector product
    on the CPU.
+1. `vector_product_2_gpu.c`: application that computes a vector product
+   on the GPU, initialization and reduction also done on GPU.
+1. `vector_product_2_cpu.c`: application that computes a vector product
+   on the CPU, initialization and reduction also done in parallel region.
+1. `vector_product_3_gpu.c`: application that computes a vector product
+   on the GPU, arrays allocated purely on device.
 1. `julia_omp_cpu.c`: application that computes a Julia set on the CPU.
 1. `julia_omp_gpu.c`: application that computes a Julia set on the GPU.
+1. `device_allocation_gpu.c`: application that demonstrates how to
+   allocate memory on the GPU.
 1. `structured_data_region_gpu.c`: application that demonstrates
    the use of the `target` directive with a structured data region.
 1. `unstructured_data_region_gpu.c`: application that demonstrates
