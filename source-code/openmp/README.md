@@ -36,6 +36,8 @@ HPC SDK](https://developer.nvidia.com/hpc-sdk) is used.
 1. `julia_omp_gpu.c`: application that computes a Julia set on the GPU.
 1. `device_allocation_gpu.c`: application that demonstrates how to
    allocate memory on the GPU.
+1. `device_allocation_declare_gpu.c`: application that demonstrates the
+   use of the `alloc` map-type modifier.
 1. `structured_data_region_gpu.c`: application that demonstrates
    the use of the `target` directive with a structured data region.
 1. `unstructured_data_region_gpu.c`: application that demonstrates
