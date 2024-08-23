@@ -44,9 +44,9 @@ HPC SDK](https://developer.nvidia.com/hpc-sdk) is used.
    the use of the `target` directive with an unstructured data region.
 1. `heat_gpu.c`: application that solves the heat equation on the GPU and
    illustrates how to update data between device and host.
+1. `julia_omp_target_declare.c`: application that computes a Julia set
+   on the GPU using the `declare target` directive.
 1. `CMakeLists.txt`: CMake file to build the applications.
-1. `compiler_issues`: directory that contains example that can not be
-   compiled with the NVIDIA HPC SDK compiler.
 
 
 ## How to build?
