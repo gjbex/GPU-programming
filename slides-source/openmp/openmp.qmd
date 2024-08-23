@@ -104,13 +104,21 @@ Do not forget `distributed`!
   - Unstructured data region
 - Allocate data on device
 
+::::: {.columns}
+:::: {.column width="50%"}
 ::: {.fragment}
-Specify slice to copy: `array[<begin>:<end>], `<end>` not included
-:::
+Specify slice to copy: `array[<begin>:<end>]
 
-::: {.fragment}
+- C++: `<end>` not included
+- Fortran: `<end>` included
+:::
+::::
+:::: {.column width="50%"}
+::: {.callout-tip .fragment}
 Shortcut: `array[:<end>]`
 :::
+::::
+:::::
 
 
 ## Structured data region
