@@ -98,7 +98,7 @@ Do not forget `distributed`!
 
 ## Moving data around
 
-- Move data explicitely `to`, `from`, `tofrom`
+- Move data explicitely `to`, `from`, `tofrom`, `alloc`, `release`, `delete`
   - As part of `#pragma omp target teams loop`
   - Structured data region
   - Unstructured data region
@@ -119,6 +119,20 @@ Shortcut: `array[:<end>]`
 :::
 ::::
 :::::
+
+
+## Map types
+
+- `to`: allocate on device, copy from host to device
+- `from`: allocate on device, copy from device to host
+- `tofrom`: allocate on device, copy from host to device, copy from device to host
+- `alloc`: allocate on device
+- `release`: decrease reference count on device
+- `delete`: deallocate on device
+
+::: {.callout-warning .fragment}
+`alloc` expects data to be allocated on host
+:::
 
 
 ## Structured data region
@@ -189,3 +203,8 @@ omp_target_free(b, omp_get_default_device());                                   
 ::: {.callout-tip .fragment}
 No data movements!
 :::
+
+
+## References
+
+- [OpenMP secification](https://www.openmp.org/spec-html/5.2/openmp.html)
