@@ -205,6 +205,19 @@ No data movements!
 :::
 
 
+## Functions as kernels
+
+```c
+void iterate_z(const float complex *z, int *count, int n,    /* <1> */
+               const float complex C);
+
+#pragma omp declare target to(iterate_z)                     /* <2> */
+```
+
+1. Function declaration or definition
+2. Declare function as kernel
+
+
 ## References
 
 - [OpenMP secification](https://www.openmp.org/spec-html/5.2/openmp.html)
