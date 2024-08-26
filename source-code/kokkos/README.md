@@ -38,4 +38,6 @@ several backends such as OpenMP, CUDA, HIP, and SYCL.
    teams.
 1. `gemm`: matrix-matrix multiplication example, show the use of
    `MDRangePolicy`.
+1. `random_walks`: simple application to illustrate the use of
+  `Kokkos::Random_X` classes as well as memory traits.
 1. `CMakeLists.txt`: CMake file to build the applications.
