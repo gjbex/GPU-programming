@@ -40,4 +40,5 @@ several backends such as OpenMP, CUDA, HIP, and SYCL.
    `MDRangePolicy`.
 1. `random_walks`: simple application to illustrate the use of
   `Kokkos::Random_X` classes as well as memory traits.
+1. `subviews.cpp`: illustration of using subviews.
 1. `CMakeLists.txt`: CMake file to build the applications.
