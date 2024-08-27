@@ -15,7 +15,7 @@ foreach(src_file ${src_files})
     add_executable(${executable_name} ${src_file})
     target_include_directories(${executable_name} PRIVATE Kokkos::kokkos)
     target_link_libraries(${executable_name} Kokkos::kokkos)
-    target_compile_options(${executable_name} PRIVATE -Wall -Wextra -pedantic -Werror)
+    target_compile_options(${executable_name} PRIVATE -Wall -Wextra -pedantic)
 endforeach()
 
 add_subdirectory(gemv)
