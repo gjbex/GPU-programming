@@ -17,3 +17,6 @@ a.out
 
 # profile data
 gmon.out
+
+# Kokkos installtion directory
+kokkos_dev
