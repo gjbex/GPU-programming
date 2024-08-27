@@ -148,3 +148,18 @@ Texture memroy has shorter cache lines, better for random access.
 - Views that do not manage memory
 - Can be created from raw pointers
 - No reference counting
+
+
+## Subviews
+
+- Similar to Fortran, MATLAB, Python slicing
+- Kokkos has no strided slices
+- Subviews are views
+- Same reference count as original view
+
+::: {.fragment}
+```c++
+Kokkos::View<double**> a("a", 10, 15);
+auto b = Kokkos::subview(a, Kokkos::ALL, std::make_pair(2, 5));             // <1>
+```
+:::
