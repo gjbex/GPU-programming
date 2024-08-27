@@ -37,3 +37,43 @@ But:
 
 {{< include /openmp/openmp.qmd >}}
 {{< include kokkos/kokkos.qmd >}}
+
+
+## Kokkos library
+
+- Algorithms
+  - Random numbers
+  - Sorting
+- Containers
+  - Unordered map
+  - Bitset
+
+::: {.callout-warning .fragment}
+Experimentatal features!
+:::
+
+
+## Random numbers
+
+::: {style="font-size: 90%;"}
+```c++
+#include <Kokkos_Random.hpp>                                                                  // <1>
+...
+Kokkos::Random_XorShift64_Pool<Kokkos::DefaultExecutionSpace> random_pool(seed);              // <2>
+...
+Kokkos::parallel_for("walks", nr_walks, KOKKOS_LAMBDA(const int walk) {
+      auto generator = random_pool.get_state();                                               // <3>
+      int pos = max_steps;
+      for (int step = 0; step < (walk % 2 == 0 ? max_steps : max_steps - 1);
+           ++step) {
+        pos += generator.drand() < 0.5 ? -1 : 1;                                              // <4>
+      }
+      distance_atomic(pos)++;
+    });
+```
+
+1. Include header file for random number generator
+2. Create a pool of generators with given `seed`
+3. For each thread, get generator from the pool
+4. Get a random number $x$ such that $0 \le x \lt 1$
+:::
