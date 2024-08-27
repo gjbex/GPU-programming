@@ -16,4 +16,6 @@ benchmarking.
 1. `random_walks.cpp`: application that simulates random walks of a given
    number of steps and writes the distribution of the final positions to
    standard output.
+1. `sort_data.cpp`: application that sorts a vector of double presision
+   floating point values using STL algorithm.
 1. `CMakeLists.txt`: CMake file to build the applications.
