@@ -125,7 +125,9 @@ Takes care of layout differences
 - `Kokkos::Atomic` = all operations on view's elements are atomic
 - Combine traits: use`|`
 
-::: {.fragment}
+
+## Using memory traits
+
 ```c++
 Kokkos::View<int*> a("a" , 100);                                                // <1>
 Kokkos::View<int*, Kokkos::MemoryTraits<Kokkos::Atomic> > a_atomic = a;         // <2>
