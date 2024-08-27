@@ -15,8 +15,10 @@ int main() {
         });
     auto a_host = Kokkos::create_mirror_view(a);
     Kokkos::deep_copy(a_host, a);
+    std::cout << "Original A:\n";
     for (int i = 0; i < a_host.extent(0); i++) {
       for (int j = 0; j < a_host.extent(1); j++) {
+        std::cout.width(4);
         std::cout << a_host(i, j) << " ";
       }
       std::cout << "\n";
@@ -25,8 +27,10 @@ int main() {
     auto a_subview = Kokkos::subview(a, Kokkos::ALL, std::make_pair(2, 5));
     auto a_subview_host = Kokkos::create_mirror_view(a_subview);
     Kokkos::deep_copy(a_subview_host, a_subview);
+    std::cout << "\nSubview A(:, 2:5):\n";
     for (int i = 0; i < a_subview_host.extent(0); i++) {
       for (int j = 0; j < a_subview_host.extent(1); j++) {
+        std::cout.width(4);
         std::cout << a_subview_host(i, j) << " ";
       }
       std::cout << "\n";
