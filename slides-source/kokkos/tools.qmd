@@ -39,3 +39,16 @@ Either
 No overhead when no tool is loaded!
 :::
 
+::: notes
+Names in parallel dispatch calls, names for views are used to identify regions in Kokkos tools.
+:::
+
+
+## Available tools
+
+- In the distribution
+  - SimpleKernelTimer
+  - MemoryHighWaterMark (max memory usage in each memory space)
+  - MemoryUsage (time line for each memory space)
+  - MemoryEvents (allocation, deallocation, deep copy)
+- Develop your own
