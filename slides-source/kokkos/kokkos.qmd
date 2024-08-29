@@ -1,0 +1,64 @@
+# Kokkos
+
+## Pros
+
+- Vendor agnostic
+- Supports many backends
+  - CPU: Serial, OpenMP, Pthreads, HPX
+  - GPU: CUDA, HIP, SYCL
+- Open source
+- Conceptually fairly straightforward
+- Fortran/Python interoperability 
+
+
+## Cons
+
+- Mainly (non-trivial) C++
+- Builds for specific targets
+- Getting good performance can be tricky
+
+
+## Programming paradigms
+
+- Shared memory parallelism
+- Task & loop parallelism
+- Distributed computing
+  - [MPI](https://www.mpi-forum.org/docs/) (Message Passing Interface)
+  - [HPX](https://github.com/STEllAR-GROUP/hpx) (High Performance ParalleX)
+  - Legion (https://legion.stanford.edu/)
+  - PGAS (Partitioned Global Address Space) using Kokkos remote spaces
+
+::: notes
+PGAS can use OpenSHMEM, NVIDIA NVSHMEM, MPI 1-sided communcation.
+:::
+
+
+## Main concepts
+
+- Memory spaces: place your data
+- Execution spaces: execute your code
+- Execution pattern: parallel constructs
+
+
+## Installation & building
+
+- Easy with CMake
+- Through Spack
+
+::: {.fragment}
+Building with CMake:
+```cmake
+find_package(Kokkos REQUIRED)
+...
+target_link_libraries(my_target Kokkos::kokkos)
+```
+:::
+
+
+{{< include /kokkos/hello_world.qmd >}}
+{{< include /kokkos/views.qmd >}}
+{{< include /kokkos/execution_patterns.qmd >}}
+{{< include /kokkos/teams.qmd >}}
+{{< include /kokkos/library.qmd >}}
+{{< include /kokkos/kernels.qmd >}}
+{{< include /kokkos/references.qmd >}}

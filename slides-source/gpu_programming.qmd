@@ -13,25 +13,45 @@ code-annotations: select
 
 GPUs *can* offer significant speedup
 
-::: {.fragment .highlight-red}
+::: {.fragment}
 But:
 
-- programming GPUs is non-trivial
-- not all algorithms are suitable
-- code may not be portable
+- Programming GPUs is non-trivial
+- Not all algorithms are suitable
+- Code may not be portable
+- Various vendors: NVIDIA, AMD, Intel
 :::
 
 ## L'embarras du choix
 
-::: {.fragment .highlight-red}
 - CUDA (NVIDIA specific)
 - HIP (AMD specific)
+- OpenCL
+- OpenMP
+- OpenACC
+- Kokkos
+- SYCL
+- Alpaka
+- ...
+
+
+## Choices & why
+
+- OpenMP
+- Kokkos
+
+::: {.fragment}
+Motivation
+
+- Vendor agnostic
+- Relatively widely used
+- Good/reasonable documentation
 :::
 
-- OpenCL (cross-platform)
-- OpenMP (with GPU offloading)
-- OpenACC (with GPU offloading)
-- Kokkos (cross-platform)
-- SYCL (cross-platform)
+::: {.callout-note .fragment}
+Work in progress, will include SYCL
+:::
+
 
 {{< include /openmp/openmp.qmd >}}
+{{< include kokkos/kokkos.qmd >}}
