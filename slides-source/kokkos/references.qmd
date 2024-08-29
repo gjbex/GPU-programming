@@ -1,0 +1,7 @@
+## Reference & further reading
+
+- [Kokkos documentation](https://kokkos.org/kokkos-core-wiki/index.html)
+- [The Kokkos lectures](https://www.youtube.com/playlist?list=PLqtSvL1MDrdFgDYpITs7aQAH9vkrs6TOF)
+- [Kokkos tutorials](https://github.com/kokkos/kokkos-tutorials)
+
+- [Kokkos repositories on GitHub](https://github.com/kokkos)

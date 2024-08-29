@@ -1,0 +1,245 @@
+## Nested parallelism
+
+Challenge: how to divide the work?
+
+::: {.incremental .fragment}
+- Use `Kokkos::TeamPolicy`
+  - League: set of teams
+  - Team: set of threads (warp on NVIDIA/wavefront on AMD)
+- Use execution patterns for, reduce, scan
+- Threads in team synchronize with `Kokkos::TeamThread::fence()`
+- Team can share scratch pad memory
+- Threads can have private scratch pad
+:::
+
+
+## Nested execution policies
+
+- Top-level: `TeamPolicy`
+- Next level
+  - `TeamThreadRange`, `TeamThreadMDRange`
+  - `TeamVectorRange`, `TeamVectorMDRange`
+  - `ThreadVectorRange`, `ThreadVectorMDRange`
+  
+
+## Example 1: $\vec{y} = A \cdot \vec{x}$
+
+Where $\vec{y} \in \mathbb{R}^M$, $A \in \mathbb{R}^{M \times N}$, $\vec{x} \in
+\mathbb{R}^N$ 
+
+```{.cpp .fragment}
+Kokkos::parallel_for("y=A*x", M,
+    KOKKOS_LAMBDA(const int i) {
+        for (int j = 0; j < N; ++j) {
+            y(i) = A(i, j)*x(j);
+        }
+    });
+```
+
+::::: {.columns}
+:::: {.column width=70%}
+```{.cpp .fragment}
+Kokkos::parallel_for("y=A*x",
+    Kokkos::TeamPolicy<>(M, Kokkos::AUTO),       // <1>
+    KOKKOS_LAMBDA(int i) {
+        double row_sum = 0;
+        Kokkos::parallel_reduce("y(i)"           // <2>
+            Kokkos::TeamThreadRange(team, N),
+            [=] (int j, double& lsum) {
+                lsum += A(i,j)*x(j);
+            }, row_sum);
+        y(i) = row_sum;
+});
+```
+
+1. Create league of teams of threads
+2. Exploit inner parallelism
+::::
+:::: {.column width=30%}
+::: {.fragment}
+Better performance for $M \ll N$
+:::
+::::
+:::::
+
+
+## Example 2: $s = \vec{y} \cdot A \cdot \vec{x}$
+
+Where $s \in \mathbb{R}$, $\vec{y} \in \mathbb{R}^M$, $A \in \mathbb{R}^{M
+\times N}$, $\vec{x} \in \mathbb{R}^N$ 
+
+```{.cpp .fragmet}
+using policy_t = Kokkos::TeamPolicy<>;
+float s {0.0f};
+Kokkos::parallel_reduce("y*A*x", policy_t(M, Kokkos::AUTO),
+    KOKKOS_LAMBDA(const policy_t::member_type& team_member, float& sum) {
+        const int i {team_member.league_rank()};
+        float row_sum {0.0f};
+        Kokkos::parallel_reduce(
+            Kokkos::TeamThreadRange(team_member, N),
+            [=] (const int j, float& row_sum) {                                 // <1>
+                row_sum += A(i, j)*x(j);                                        // <2>
+            }, row_sum);
+        Kokkos::single(Kokkos::PerTeam(team_member),                            // <3>
+            [&]() { result += y(i)*row_sum; });                                 // <4>
+    }, s);
+```
+
+1. Note: capture by value
+2. Note: *A* is accessed row-wise!
+3. Only one thread per team should update!
+4. Note: capture by reference
+
+
+## Scratch pads
+
+::::: {.columns}
+:::: {.column width=40%}
+- Level-0
+  - Limited size, fast
+  - "Manual L1 cache"
+- Level-1
+  - Larger, but less performance
+  - "Nearest fast storage"
+::::
+:::: {.column width=60% .fragment}
+- Team or thread private memory
+  - Per work item temp storage
+  - Size $\propto$ nr. threads
+- Manually managed cache
+  - Cache frequently used data
+  - exposes on-core scratch space (e.g., NVIDIA GPU shared memory)
+::::
+:::::
+
+
+## How to use scratch pads?
+
+- `TeamPolicy`
+- Determine actual scratch pad size
+- Execution pattern
+  - Create scratch view
+  - Initialize scratch view using `VectorTeamPolicy`
+  - Use scratch view
+
+
+## Base version
+
+```c++
+Kokkos::View<double***> A("A", nr_elements, nr_qp, vector_size);
+Kokkos::View<double**> B("B", nr_elements, vector_size);
+Kokkos::View<double**> C("C", nr_elements, nr_qp);
+
+Kokkos::parallel_for(
+    "C=A*B", Kokkos::TeamPolicy<>(nr_elements, Kokkos::AUTO),
+    KOKKOS_LAMBDA(const Kokkos::TeamPolicy<>::member_type& team) {
+      const int element{team.league_rank()};
+      Kokkos::parallel_for(Kokkos::TeamThreadRange(team, nr_qp),
+                           [&](const int& qp) {
+                             double total{0.0};
+                             for (int i = 0; i < vector_size; ++i) {
+                               total += A(element, qp, i) * B(element, i);   // <1>
+                             }
+                             C(element, qp) = total;
+                           });
+    });
+```
+
+1. Note: each thread in a team uses same `B(element, :)`
+
+
+## Determine scratch pad size
+
+```c++
+using ScratchView =                                                    // <1>
+    Kokkos::View<double*,
+                 Kokkos::DefaultExecutionSpace::scratch_memory_space>;
+size_t scratch_size = ScratchView::shmem_size(vector_size);             // <2>
+```
+
+1. Define scratch view type based on execution space
+2. Determine size of scratch space to store `vector_size` values of type `double`
+
+::: {.callout-note}
+Required to ensure alignment taken into account!
+:::
+
+
+## Reserve scratch pad memory
+
+```c++
+const int level {0};                                               // <1>
+Kokkos::TeamPolicy<> policy(nr_elements, Kokkos::AUTO);            // <2>
+Kokkos::parallel_for(
+    policy.set_scratch_size(level, Kokkos::PerTeam(scratch_size)), // <3>
+    ...
+);
+```
+
+1. Set the scratch pad level
+2. Create the `TeamPolicy` to use
+3. Allocate scratch pad at given level of given size
+
+::: {.fragment}
+- Scratch can be `Kokkos::PerTeam` and/or `Kokkos::PerThread`
+- Both levels can be used
+- Only allocates memory
+:::
+
+
+## Create scratch view and initialize
+
+```c++
+Kokkos::parallel_for(
+    policy.set_scratch_size(level, Kokkos::PerTeam(scratch_size)),
+    KOKKOS_LAMBDA(const Kokkos::TeamPolicy<>::member_type& team) {
+      const int element{team.league_rank()};
+      ScratchView scratch(team.team_scratch(level), vector_size);      // <1>
+      Kokkos::parallel_for(
+          Kokkos::TeamVectorRange(team, vector_size),                  // <2>
+          [&](const int& i) { scratch(i) = B(element, i); });
+      team.team_barrier();                                             // <3>
+      ...
+```
+
+1. Create scratch view at given level and of given size
+2. Copy row of `B` in parallel
+3. Barrier to ensure `scratch` is fully initialized
+
+::: {.callout-warning .fragment}
+`Kokkos::parallel_for` can run asynchronously, threads will not synchronize
+:::
+
+
+## Putting it all together
+
+
+```c++
+Kokkos::parallel_for(
+    "C=A*B", policy.set_scratch_size(level, Kokkos::PerTeam(scratch_size)),
+    KOKKOS_LAMBDA(const Kokkos::TeamPolicy<>::member_type& team) {
+      const int element{team.league_rank()};
+      ScratchView scratch(team.team_scratch(level), vector_size);
+      Kokkos::parallel_for(
+          Kokkos::TeamVectorRange(team, vector_size),
+          [&](const int& i) { scratch(i) = B(element, i); });
+      team.team_barrier();
+      Kokkos::parallel_for(Kokkos::TeamThreadRange(team, nr_qp),
+                           [&](const int& qp) {
+                             double total{0.0};
+                             for (int i = 0; i < vector_size; ++i) {
+                               total += A(element, qp, i) * scratch(i);      // <1>
+                             }
+                             C(element, qp) = total;
+                           });
+    });
+```
+
+1. Each thread in team uses same `scratch`
+
+All threads in team use per team `scratch`
+
+::: notes
+Scratch pads are not deallocated and can not be deallocated.  This would
+complicate memory management too much.
+:::

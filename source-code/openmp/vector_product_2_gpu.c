@@ -14,23 +14,29 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    const float r = 0.2f;
-    for (int i = 0; i < N; i++) {
-        vecA[i] = r*i;
-        vecB[i] = 2.1f;
-        vecC[i] = 0.0f;
-    }
-
-#pragma omp target teams loop map(to:vecA[:N], vecB[:N]) map(tofrom:vecC[:N])
-    for (int i = 0; i < N; i++) {
-        for (int j = 0; j < n; j++) {
-            vecC[i] += vecA[i]*vecB[i];
-        }
-    }
-
     float sum = 0.0f;
-    for (int i = 0; i < N; i++) {
-        sum += vecC[i];
+
+#pragma omp target data map(to:vecA[:N], vecB[:N], vecC[:N])
+    {
+        const float r = 0.2f;
+#pragma omp target loop
+        for (int i = 0; i < N; i++) {
+            vecA[i] = r*i;
+            vecB[i] = 2.1f;
+            vecC[i] = 0.0f;
+        }
+
+#pragma omp target loop
+        for (int i = 0; i < N; i++) {
+            for (int j = 0; j < n; j++) {
+                vecC[i] += vecA[i]*vecB[i];
+            }
+        }
+
+#pragma omp target loop reduction(+:sum)
+        for (int i = 0; i < N; i++) {
+            sum += vecC[i];
+        }
     }
     printf("The sum is: %8.6e \n", sum);
 

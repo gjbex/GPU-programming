@@ -13,25 +13,31 @@ int main(int argc, char *argv[]) {
         fprintf(stderr, "error: can not allocated array of size %d\n", N);
         return 1;
     }
+    float sum = 0.0f;
 
-    const float r = 0.2f;
-    for (int i = 0; i < N; i++) {
-        vecA[i] = r*i;
-        vecB[i] = 2.1f;
-        vecC[i] = 0.0f;
-    }
+#pragma omp parallel default(none) shared(vecA, vecB, vecC, N, n, sum)
+    {
+        const float r = 0.2f;
+#pragma omp for schedule(static)
+        for (int i = 0; i < N; i++) {
+            vecA[i] = r*i;
+            vecB[i] = 2.1f;
+            vecC[i] = 0.0f;
+        }
 
-#pragma omp target teams loop map(to:vecA[:N], vecB[:N]) map(tofrom:vecC[:N])
-    for (int i = 0; i < N; i++) {
-        for (int j = 0; j < n; j++) {
-            vecC[i] += vecA[i]*vecB[i];
+#pragma omp for
+        for (int i = 0; i < N; i++) {
+            for (int j = 0; j < n; j++) {
+                vecC[i] += vecA[i]*vecB[i];
+            }
+        }
+
+#pragma omp for reduction(+:sum)
+        for (int i = 0; i < N; i++) {
+            sum += vecC[i];
         }
     }
 
-    float sum = 0.0f;
-    for (int i = 0; i < N; i++) {
-        sum += vecC[i];
-    }
     printf("The sum is: %8.6e \n", sum);
 
     free(vecA);

@@ -25,7 +25,7 @@ int main(int argc, char *argv[]) {
 #pragma omp target teams distribute parallel for is_device_ptr(b)
     for (int i = 0; i < n; i++) {
         for (int j = 0; j < n; j++) {
-            b[i*n + j] = 2.0f*(rand()/(float) RAND_MAX - 0.5f);
+            b[i*n + j] = ((float) (i*n + j))/(n*n);
         }
     }
     for (int iter = 0; iter < nr_iters; iter++) {

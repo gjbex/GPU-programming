@@ -1,0 +1,57 @@
+---
+title: "GPU programming"
+author: "[Geert Jan Bex](mailto:geertjan.bex@uhasselt.be)"
+institution: "Hasselt University"
+format:
+  revealjs:
+    transiton: slide
+    slide-number: true
+code-annotations: select
+---
+
+## Motivation
+
+GPUs *can* offer significant speedup
+
+::: {.fragment}
+But:
+
+- Programming GPUs is non-trivial
+- Not all algorithms are suitable
+- Code may not be portable
+- Various vendors: NVIDIA, AMD, Intel
+:::
+
+## L'embarras du choix
+
+- CUDA (NVIDIA specific)
+- HIP (AMD specific)
+- OpenCL
+- OpenMP
+- OpenACC
+- Kokkos
+- SYCL
+- Alpaka
+- ...
+
+
+## Choices & why
+
+- OpenMP
+- Kokkos
+
+::: {.fragment}
+Motivation
+
+- Vendor agnostic
+- Relatively widely used
+- Good/reasonable documentation
+:::
+
+::: {.callout-note .fragment}
+Work in progress, will include SYCL
+:::
+
+
+{{< include /openmp/openmp.qmd >}}
+{{< include kokkos/kokkos.qmd >}}

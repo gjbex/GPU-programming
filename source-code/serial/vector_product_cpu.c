@@ -21,7 +21,6 @@ int main(int argc, char *argv[]) {
         vecC[i] = 0.0f;
     }
 
-#pragma omp target teams loop map(to:vecA[:N], vecB[:N]) map(tofrom:vecC[:N])
     for (int i = 0; i < N; i++) {
         for (int j = 0; j < n; j++) {
             vecC[i] += vecA[i]*vecB[i];

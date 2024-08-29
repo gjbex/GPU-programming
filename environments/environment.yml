@@ -1,0 +1,9 @@
+name: gpu_programming
+channels:
+  - conda-forge
+dependencies:
+  - numpy
+  - matplotlib
+  - gprof2dot
+  - graphviz
+prefix: /home/gjb/mambaforge/envs/gpu_programming
