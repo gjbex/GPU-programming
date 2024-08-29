@@ -87,10 +87,10 @@ Kokkos::parallel_for(
 
 ::: {.fragment}
 Default execution space: highest enabled at compile time
-:::
 
 - `Kokkos::DefaultExecutionSpace` = default execution space
 - `Kokkos::DefaultHostExecutionSpace` = default host execution space
+:::
 
 
 ## Using execution spaces
