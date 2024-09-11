@@ -1,0 +1,18 @@
+## Why kernels?
+
+- Don't program your own matrix-matrix multiplication!
+- Portable performance
+- Can use vendor libraries
+
+::: {.callout-note .fragment}
+Separate download/installation
+:::
+
+
+## Which kernels?
+
+- Dense linear algebra: BLAS, batched BLAS, some LAPACK
+- Sparse linear algebra, CRS (Compressed Row Storage)
+- Graph algorithms: distance-1/distance-2 graph coloring, bipartite graph coloring
+- Sparse solvers: variants of Gauss-Seidel
+- ODE solvers: explicit Runge-Kutta, implicit BDF, Newton

@@ -75,10 +75,10 @@ Kokkos::View<double**, Kokkos::LayoutRight> b("b", 10, 15);
 
 ::: {.fragment}
 Default "best" for memory space, parallel access over leftmost index
-:::
 
 - Left for device memory spaces: coalesced memory access
 - Right for host memory space: cache-friendly access
+:::
 
 
 ## Deep copy
