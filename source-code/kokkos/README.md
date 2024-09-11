@@ -18,7 +18,6 @@ several backends such as OpenMP, CUDA, HIP, and SYCL.
 1. `vector_product_lambdas.cpp`: vector multiplication using lambdas.
 1. `random_numbers.cpp`: illustrates deep copy of views and reduction
    to a non-scalar.
-1. `layouts.cpp`: illustration of different layouts for views.
 1. `pi.cpp`: Monte Carlo approximation of pi, illustrating the use of
    `Kokkos::Random_X` classes.
 1. `host_to_host_deepcopy.cpp`: illustration that deep copy of a mirror
@@ -40,5 +39,6 @@ several backends such as OpenMP, CUDA, HIP, and SYCL.
    `MDRangePolicy`.
 1. `random_walks`: simple application to illustrate the use of
   `Kokkos::Random_X` classes as well as memory traits.
+1. `cuda_required`: examples that won't compile without `Kokkos_ENABLE_CUDA`.
 1. `subviews.cpp`: illustration of using subviews.
 1. `CMakeLists.txt`: CMake file to build the applications.
