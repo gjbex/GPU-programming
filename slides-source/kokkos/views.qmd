@@ -247,3 +247,23 @@ Kokkos::View<double**> a("a", 10, 15);
 auto b = Kokkos::subview(a, Kokkos::ALL, std::make_pair(2, 5));             // <1>
 ```
 :::
+
+
+## Porting to Kokkos
+
+::: {.callout-tip}
+`Kokkos::DualView` helps porting
+:::
+
+::: {.fragment style="font-size: 80%"}
+- View that holds data on host and device
+- Can be used as a single view
+- `modify` and `sync` methods
+:::
+
+::: {.callout-warning .fragment}
+You are responsible for
+
+- marking data as modified
+- syncing data to relevant memory space
+:::
