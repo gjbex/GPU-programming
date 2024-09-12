@@ -38,9 +38,9 @@ int main(int argc, char* argv[]) {
     // Check that distance contains the correct values
     int nr_walks_check{0};
     Kokkos::parallel_reduce(
-        "check", distance_atomic.extent(0),
+        "check", distance.extent(0),
         KOKKOS_LAMBDA(const int i, int& nr_walks_check) {
-          nr_walks_check += distance_atomic(i);
+          nr_walks_check += distance(i);
         },
         nr_walks_check);
     // Print the distribution of the distance from the origin
