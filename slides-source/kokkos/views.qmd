@@ -144,6 +144,51 @@ Texture memroy has shorter cache lines, better for random access.
 :::
 
 
+## Scatter views
+
+Implementation execution space dependent
+
+- On GPUs: atomic
+- On CPUs: data replication
+
+::: {.fragment style="font-size: 80%"}
+```c++
+#include <Kokkos_ScatterView.hpp>                                         // <1>
+...
+Kokkos::View<int*> distance("distance", 2 * max_steps + 1);
+Kokkos::deep_copy(distance, 0);
+Kokkos::Experimental::ScatterView<int*> distance_scatter_view(distance);  // <2>
+
+// Perform the random walks
+Kokkos::parallel_for(
+    "walks", nr_walks, KOKKOS_LAMBDA(const int walk) {
+      auto distance_access = distance_scatter_view.access();              // <3>
+      int pos = max_steps;
+      for (int step = 0; step < nr_steps; ++step) {
+        update_position(pos)
+      }
+      distance_access(pos)++;                                            // <4>
+    });
+```
+
+1. Include specific header file
+2. Create scatter view from ordinary view
+3. Create access to scatter view
+4. Access scatter view as ordinary view, but no race conditions
+:::
+
+::: notes
+When running with few threads (<= 16) on CPUs, data replication is more efficient.
+Each thread has its own copy of `distance`, and they are aggregated at the end of
+the parallel region.
+
+Since this doesn't scale to large numbers of threads, atomic operations are used on GPUs.
+
+`Kokkos::Experimental::ScatterView` will be compiled to the appropriate implementation
+depending on the execution space.
+:::
+
+
 ## Unmanaged views
 
 - Useful for interfacing with external libraries
