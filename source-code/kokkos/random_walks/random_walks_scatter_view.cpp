@@ -1,7 +1,7 @@
 #include <iostream>
 #include <Kokkos_Core.hpp>
-#include <Kokkos_ScatterView.hpp>
 #include <Kokkos_Random.hpp>
+#include <Kokkos_ScatterView.hpp>
 
 int main(int argc, char* argv[]) {
   const int max_steps{argc > 1 ? std::stoi(argv[1]) : 1000};
