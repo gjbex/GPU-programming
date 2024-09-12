@@ -159,7 +159,6 @@ Kokkos::View<int*> distance("distance", 2 * max_steps + 1);
 Kokkos::deep_copy(distance, 0);
 Kokkos::Experimental::ScatterView<int*> distance_scatter_view(distance);  // <2>
 
-// Perform the random walks
 Kokkos::parallel_for(
     "walks", nr_walks, KOKKOS_LAMBDA(const int walk) {
       auto distance_access = distance_scatter_view.access();              // <3>
@@ -169,12 +168,14 @@ Kokkos::parallel_for(
       }
       distance_access(pos)++;                                            // <4>
     });
+    Kokkos::experimental::contribute(distance, distance_scatter_view);   // <5>
 ```
 
 1. Include specific header file
 2. Create scatter view from ordinary view
 3. Create access to scatter view
 4. Access scatter view as ordinary view, but no race conditions
+5. Contribute data back to ordinary view (no-op for atomic implementation)
 :::
 
 ::: notes
@@ -186,6 +187,42 @@ Since this doesn't scale to large numbers of threads, atomic operations are used
 
 `Kokkos::Experimental::ScatterView` will be compiled to the appropriate implementation
 depending on the execution space.
+
+Out of the box only supports `+=` and `-=`, however, undocumented support for other
+operations is available via template arguments.
+:::
+
+
+## Don't duplicate
+
+- Creating scatter view  is expensive
+- Do it once, reuse
+- Sync scatter view with ordinary view using `reset`
+
+::: {.fragment style="font-size: 80%"}
+```c++
+void compute_distances(Kokkos::Experimental::ScatterView<int*>& distances, // <1>
+                       const int nr_walks, const int nr_steps,
+                       const int max_steps) {
+  distance_scatter_view.reset();                                           // <2>
+  Kokkos::parallel_for(
+    "walks", nr_walks, KOKKOS_LAMBDA(const int walk) {
+      auto distance_access = distance_scatter_view.access();               // <3>
+      int pos = max_steps;
+      for (int step = 0; step < nr_steps; ++step) {
+        update_position(pos)
+      }
+      distance_access(pos)++;                                              // <4>
+    });
+  Kokkos::experimental::contribute(distance, distance_scatter_view);       // <5>
+}
+```
+
+1. Pass scatter view as argument
+2. Reset scatter view
+3. Create access to scatter view
+4. Access scatter view as ordinary view, but no race conditions
+5. Contribute data back to ordinary view (no-op for atomic implementation)
 :::
 
 
