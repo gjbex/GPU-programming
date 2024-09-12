@@ -144,6 +144,88 @@ Texture memroy has shorter cache lines, better for random access.
 :::
 
 
+## Scatter views
+
+Implementation execution space dependent
+
+- On GPUs: atomic
+- On CPUs: data replication
+
+::: {.fragment style="font-size: 80%"}
+```c++
+#include <Kokkos_ScatterView.hpp>                                         // <1>
+...
+Kokkos::View<int*> distance("distance", 2 * max_steps + 1);
+Kokkos::deep_copy(distance, 0);
+Kokkos::Experimental::ScatterView<int*> distance_scatter_view(distance);  // <2>
+
+Kokkos::parallel_for(
+    "walks", nr_walks, KOKKOS_LAMBDA(const int walk) {
+      auto distance_access = distance_scatter_view.access();              // <3>
+      int pos = max_steps;
+      for (int step = 0; step < nr_steps; ++step) {
+        update_position(pos)
+      }
+      distance_access(pos)++;                                            // <4>
+    });
+    Kokkos::experimental::contribute(distance, distance_scatter_view);   // <5>
+```
+
+1. Include specific header file
+2. Create scatter view from ordinary view
+3. Create access to scatter view
+4. Access scatter view as ordinary view, but no race conditions
+5. Contribute data back to ordinary view (no-op for atomic implementation)
+:::
+
+::: notes
+When running with few threads (<= 16) on CPUs, data replication is more efficient.
+Each thread has its own copy of `distance`, and they are aggregated at the end of
+the parallel region.
+
+Since this doesn't scale to large numbers of threads, atomic operations are used on GPUs.
+
+`Kokkos::Experimental::ScatterView` will be compiled to the appropriate implementation
+depending on the execution space.
+
+Out of the box only supports `+=` and `-=`, however, undocumented support for other
+operations is available via template arguments.
+:::
+
+
+## Don't duplicate
+
+- Creating scatter view  is expensive
+- Do it once, reuse
+- Sync scatter view with ordinary view using `reset`
+
+::: {.fragment style="font-size: 80%"}
+```c++
+void compute_distances(Kokkos::Experimental::ScatterView<int*>& distances, // <1>
+                       const int nr_walks, const int nr_steps,
+                       const int max_steps) {
+  distance_scatter_view.reset();                                           // <2>
+  Kokkos::parallel_for(
+    "walks", nr_walks, KOKKOS_LAMBDA(const int walk) {
+      auto distance_access = distance_scatter_view.access();               // <3>
+      int pos = max_steps;
+      for (int step = 0; step < nr_steps; ++step) {
+        update_position(pos)
+      }
+      distance_access(pos)++;                                              // <4>
+    });
+  Kokkos::experimental::contribute(distance, distance_scatter_view);       // <5>
+}
+```
+
+1. Pass scatter view as argument
+2. Reset scatter view
+3. Create access to scatter view
+4. Access scatter view as ordinary view, but no race conditions
+5. Contribute data back to ordinary view (no-op for atomic implementation)
+:::
+
+
 ## Unmanaged views
 
 - Useful for interfacing with external libraries
@@ -164,4 +246,24 @@ Texture memroy has shorter cache lines, better for random access.
 Kokkos::View<double**> a("a", 10, 15);
 auto b = Kokkos::subview(a, Kokkos::ALL, std::make_pair(2, 5));             // <1>
 ```
+:::
+
+
+## Porting to Kokkos
+
+::: {.callout-tip}
+`Kokkos::DualView` helps porting
+:::
+
+::: {.fragment style="font-size: 80%"}
+- View that holds data on host and device
+- Can be used as a single view
+- `modify` and `sync` methods
+:::
+
+::: {.callout-warning .fragment}
+You are responsible for
+
+- marking data as modified
+- syncing data to relevant memory space
 :::
