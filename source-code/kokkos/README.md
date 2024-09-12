@@ -42,4 +42,5 @@ several backends such as OpenMP, CUDA, HIP, and SYCL.
 1. `cuda_required`: examples that won't compile without `Kokkos_ENABLE_CUDA`.
 1. `tasking`: simple example of using tasking.
 1. `subviews.cpp`: illustration of using subviews.
+1. `dualview`: illustration of using `Kokkos::DualView`.
 1. `CMakeLists.txt`: CMake file to build the applications.

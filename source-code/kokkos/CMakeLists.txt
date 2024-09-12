@@ -19,6 +19,7 @@ foreach(src_file ${src_files})
     target_compile_options(${executable_name} PRIVATE -Wall -Wextra -pedantic)
 endforeach()
 
+add_subdirectory(dualview)
 add_subdirectory(gemv)
 add_subdirectory(gemm)
 add_subdirectory(scratch)
