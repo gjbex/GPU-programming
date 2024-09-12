@@ -6,7 +6,7 @@ if(NOT CMAKE_BUILD_TYPE)
     FORCE)
 endif()
 
-set(Kokkos_COMMON_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../dep/Kokkos)
+set(Kokkos_COMMON_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/dep/Kokkos)
 
 find_package(Kokkos CONFIG)
 if(Kokkos_FOUND)
