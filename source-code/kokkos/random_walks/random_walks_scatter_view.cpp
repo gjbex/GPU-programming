@@ -33,6 +33,7 @@ int main(int argc, char* argv[]) {
           }
           distance_access(pos)++;
         });
+    Kokkos::Experimental::contribute(distance, distance_scatter_view);
 
     // Check that distance contains the correct values
     int nr_walks_check{0};
