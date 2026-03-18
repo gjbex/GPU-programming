@@ -7,7 +7,6 @@ extra material not used  in the training.
 ## What is it?
 
 1. `serial`: base code that is not parallelized.
-1. `openmp`: OpenMP offloading examples.
 1. `kokkos`: Kokkos framework examples.
 1. `thrust`: Thrust library examples.
 1. `stl`: examples of running C++ STL algorithms on GPUs.
