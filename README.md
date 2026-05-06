@@ -1,7 +1,12 @@
 # GPU programming
 
-This repository contains material for a training on hardware-agnostic GPU
-programming.
+This repository contains material for a training on GPU programming.
+It contains some general-purpose examples, but is mostly intended to
+contain material common to all specific trainings on GPU programming,
+
+* [Python on GPUs](https://gjbex.github.io/Python-on-GPUs/)
+* [OpenMP GPU offloading](https://gjbex.github.io/OpenMP-GPU-offloading/)
+* [Heterogeneous programming with Kokkos](https://gjbex.github.io/Heterogeneous-programming-with-Kokkos/)
 
 
 ## What is it?
