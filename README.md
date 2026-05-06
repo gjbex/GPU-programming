@@ -11,6 +11,9 @@ contain material common to all specific trainings on GPU programming,
 
 ## What is it?
 
+1. `gpu_programming.pptx`: Powerpoint presentation on GPU hardware and general
+   programming model.  It can serve as an introduction for the specific
+   trainings on GPU programming.
 1. `source-code`: directory with source code for the training.
 1. `environmets`: directory with hpccm recipes to build containers for this
    training.
