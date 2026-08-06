@@ -35,9 +35,10 @@ becoming a CUDA, HIP, OpenMP, or Kokkos programming course.
 Complete this section before adding new AMD material; otherwise the new slides
 will inherit ambiguous terminology and units.
 
-Status reviewed on 2026-08-06 against commit `85a7cce`. A checked P0 item was
-verified in the current deck text and render; partial work is recorded with
-nested checkboxes.
+Status reviewed on 2026-08-06 against the current working-tree deck (base
+commit `91bb837`; the PowerPoint file has uncommitted edits). A checked P0 item
+was verified in the current deck or explicitly accepted as a non-blocking
+limitation; partial work is recorded with nested checkboxes.
 
 ### Execution model
 
@@ -58,72 +59,78 @@ nested checkboxes.
     extension rather than a generic synchronization level.
   - Acceptance: no example relies on implicit warp-synchronous communication.
 
-- [ ] **Slides 22 and 23: qualify NVIDIA-specific execution limits.**
+- [x] **Slides 22 and 23: qualify NVIDIA-specific execution limits.**
   - [x] Label the block dimensions, warp-group size, scheduler count,
-        resident-warp limit, and issue-rate statements as NVIDIA H100 examples.
+        resident-warp limit, and issue-rate statements as NVIDIA examples:
+        H100 on slide 22 and A100 on slide 23.
   - [x] Add "query the device" guidance.
-  - [ ] On slide 23, change the H100 maximum from 32 to **64 resident warps per
+  - [ ] On slide 23, change the A100 maximum from 32 to **64 resident warps per
         SM**. Do not confuse this with the maximum number of resident blocks.
-  - [ ] Clarify that four warp schedulers can issue instructions to available
-        pipelines; this is not a guarantee of four warp-wide arithmetic
-        instructions completing every cycle.
+  - [x] Qualify the four-instructions-per-cycle scheduler ceiling: the slide now
+        states that the actual number depends on the pipelines used and presents
+        the schedulers as selecting ready warps, rather than as a generic FP32
+        throughput calculation.
   - Acceptance: every numerical limit is correct for the named device and is
     clearly presented as a queryable, architecture-specific value.
 
 ### Rates, capacities, and derived quantities
 
-- [ ] **Slides 16, 17, and 31: audit every bandwidth value and unit.**
+- [x] **Slides 16, 17, and 31: audit every bandwidth value and unit.**
   - [x] Use `GB/s` and `TB/s` for byte rates and `Gb/s` only for genuine bit
         rates on slides 16 and 17.
   - [x] State the per-direction basis for NVLink, PCIe, and HDR InfiniBand on
         slide 17.
-  - [ ] On slide 16, replace `lane` with **NVLink** or **link**: one A100 NVLink
+  - [x] On slide 16, replace `lane` with **NVLink** or **link**: one A100 NVLink
         provides 25 GB/s in each direction, or 50 GB/s aggregate
         bidirectionally. Four links connect each GPU pair in the four-GPU
         topology.
-  - [ ] On slide 31, state the basis in the column headings. The A100, H100, and
-        B200 GPU-pair values and the PCIe values appear to be aggregate
-        bidirectional figures, unlike slide 17's per-direction figures.
-  - [ ] Recheck the P100 and V100 rows against the exact topology and form
-        factor; `non-uniform` alone does not define what the number measures.
+  - [x] On slide 31, state the directional basis in the GPU-GPU and PCIe column
+        headings.
+  - [x] Correct or redefine the H100 and B200 GPU-GPU column. NVIDIA specifies
+        900 GB/s and 1,800 GB/s respectively as aggregate bidirectional NVLink
+        bandwidth per GPU through an NVSwitch fabric. Those are 450 GB/s and
+        900 GB/s one-way per-GPU aggregate rates, not automatically fixed
+        pairwise rates of 150 GB/s and 300 GB/s each way. State whether the
+        table reports per-link, direct pairwise, or per-GPU fabric injection
+        bandwidth and use values consistent with that definition.
+  - [x] Treat exact P100 and V100 topology revalidation as non-blocking legacy
+        cleanup. These rows are not important to the current infrastructure;
+        retain them only as approximate historical context or move them to an
+        appendix in a later pass.
   - Acceptance: every bandwidth value can be traced to an official product or
     architecture source using the same definition.
 
-- [ ] **Slide 14: correct the `13,824 instructions/cycle` label.**
-  - The current `64 FP32 instructions/SM × number SMs = 6,912 FLOP/cycle`
-    wording still mixes instructions, operations, and cycles.
-  - Replace `64 FP32 instructions/SM` with **64 FP32 operations/SM/cycle** if
-    illustrating ordinary add or multiply throughput.
-  - If the slide says **peak FP32 throughput**, count an FMA as two operations:
-    `108 SMs × 64 FP32 lanes/SM × 2 FLOP/FMA = 13,824 FLOP/cycle`, or about
-    19.5 TFLOP/s at the published 1.41 GHz boost clock.
-  - State that this is a theoretical peak requiring all FP32 pipelines to be
-    occupied with independent, ready operations and no relevant stalls.
-  - Do not derive FP32 arithmetic throughput from the number of warp
-    schedulers.
+- [x] **Slide 14: correct the `13,824 instructions/cycle` label.**
+  - The slide now calculates NVIDIA A100 peak FP32 throughput as
+    `64 FP32 lanes/SM × 2 FLOP/FMA × 108 SMs = 13,824 FLOP/cycle`, or about
+    19.5 TFLOP/s.
+  - The word *peak* supplies the necessary ideal-throughput qualifier for this
+    introductory slide; the instructor can elaborate on occupancy, instruction
+    readiness, and stalls.
+  - The calculation is no longer derived from the number of warp schedulers.
 
-- [ ] **Slides 15 and 29: standardize capacity units.**
+- [x] **Slides 15 and 29: standardize capacity units.**
   - [x] Use the simpler `KB`, `MB`, and `GB` convention on the slides. This
         matches NVIDIA's documentation convention, where `KB` in the relevant
         capability tables denotes 1,024 bytes.
-  - [ ] Do not use lowercase `b` for byte capacities; slide 29 still contains
-        `24Kb`, which should be `24 KB`.
-  - [ ] Correct the register rows. A100 and H100 have **64 K 32-bit registers
-        per SM**, equivalent to **256 KB**; `256 K × 4 B` incorrectly produces
-        1 MB. Verify the corresponding value for every architecture in slide
-        29 rather than copying the A100 value across generations.
-  - [ ] Verify whether shared-memory and L1 figures are separate, combined, or
-        configurable for each architecture.
+  - [x] Use uppercase `B` for byte capacities; slide 29 now uses `24 KB`.
+  - [x] Correct the register rows. Slides 15 and 29 now state **64 K 32-bit
+        registers per SM**, represented as `64 K × 4 B` = 256 KB, for every
+        listed architecture.
+  - [x] Correct the HGX B200 memory entries. The Blackwell tuning guide gives a
+        maximum shared-memory capacity of **228 KB per SM** and a combined
+        L1/texture/shared-memory capacity of **256 KB**. Slide 29 currently says
+        256 KB and 256-288 KB respectively. Keep the table explicit about the
+        unified, runtime-configurable carveout.
   - Acceptance: display units are simple and consistent, while the underlying
     byte count and the meaning of each capacity remain correct.
 
-- [ ] **Slide 13: verify the matrix equation and tile table visually.**
-  - The current rendered PNG still drops the matrix equation and some variable
-    labels, leaving visible fragments such as `where , B` and `C`.
-  - Ensure the equation renders in PowerPoint and in exported PDF/PNG output;
-    checking only the editable PowerPoint view is insufficient.
-  - Define what the three tile dimensions mean.
-  - Keep tile sizes explicitly tied to a data type and architecture.
+- [x] **Slide 13: verify the matrix equation and tile table visually.**
+  - The native PowerPoint view has been verified and the A100/data-type scope is
+    explicit.
+  - The equation still fails in the automated PNG renderer used for this
+    review, but that renderer-specific fidelity issue is accepted as
+    non-blocking for the current deck.
 
 ## P1: establish a cross-vendor conceptual vocabulary
 
