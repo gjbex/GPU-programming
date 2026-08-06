@@ -22,6 +22,9 @@ becoming a CUDA, HIP, OpenMP, or Kokkos programming course.
 - [ ] Label all product-specific numbers with the exact model and form factor.
 - [ ] Distinguish bits from bytes and per-link, pairwise, per-device aggregate,
       and system aggregate bandwidth.
+- [ ] Use `KB`, `MB`, and `GB` on learner-facing slides for simplicity. Treat
+      them as vendor-style binary capacity labels (`KB` = 1,024 bytes) and use
+      exact byte counts when presenting device-query output or calculations.
 - [ ] Put volatile product specifications in an appendix rather than the core
       conceptual narrative.
 - [ ] Add official sources for non-trivial hardware claims and tables to the
@@ -32,9 +35,13 @@ becoming a CUDA, HIP, OpenMP, or Kokkos programming course.
 Complete this section before adding new AMD material; otherwise the new slides
 will inherit ambiguous terminology and units.
 
+Status reviewed on 2026-08-06 against commit `85a7cce`. A checked P0 item was
+verified in the current deck text and render; partial work is recorded with
+nested checkboxes.
+
 ### Execution model
 
-- [ ] **Slide 11: correct the AMD wavefront width.**
+- [x] **Slide 11: correct the AMD wavefront width.**
   - State that NVIDIA warps contain 32 threads.
   - State that AMD Instinct/CDNA wavefronts contain 64 work-items.
   - Mention that AMD Radeon/RDNA commonly uses wave32, so "AMD GPU" is not a
@@ -42,7 +49,7 @@ will inherit ambiguous terminology and units.
   - Introduce *subgroup* as the vendor-neutral term.
   - Acceptance: no slide equates an AMD Instinct wavefront with 32 threads.
 
-- [ ] **Slide 24: remove "warp: implicit lockstep" as a correctness rule.**
+- [x] **Slide 24: remove "warp: implicit lockstep" as a correctness rule.**
   - Explain that subgroup execution is useful for understanding performance,
     but synchronization and memory ordering require the appropriate explicit
     primitives.
@@ -52,35 +59,69 @@ will inherit ambiguous terminology and units.
   - Acceptance: no example relies on implicit warp-synchronous communication.
 
 - [ ] **Slides 22 and 23: qualify NVIDIA-specific execution limits.**
-  - Label the block dimensions, warp-group size, scheduler count, resident-warp
-    limit, and issue-rate statements with the architecture to which they apply.
-  - Replace universal-looking limits with "query the device" guidance.
+  - [x] Label the block dimensions, warp-group size, scheduler count,
+        resident-warp limit, and issue-rate statements as NVIDIA H100 examples.
+  - [x] Add "query the device" guidance.
+  - [ ] On slide 23, change the H100 maximum from 32 to **64 resident warps per
+        SM**. Do not confuse this with the maximum number of resident blocks.
+  - [ ] Clarify that four warp schedulers can issue instructions to available
+        pipelines; this is not a guarantee of four warp-wide arithmetic
+        instructions completing every cycle.
+  - Acceptance: every numerical limit is correct for the named device and is
+    clearly presented as a queryable, architecture-specific value.
 
 ### Rates, capacities, and derived quantities
 
 - [ ] **Slides 16, 17, and 31: audit every bandwidth value and unit.**
-  - Use `GB/s` and `TB/s` for byte rates and `Gb/s` only for genuine bit rates.
-  - State whether a value is unidirectional or bidirectional.
-  - State whether it is per lane/link, between a GPU pair, per GPU, or aggregate
-    across the node.
+  - [x] Use `GB/s` and `TB/s` for byte rates and `Gb/s` only for genuine bit
+        rates on slides 16 and 17.
+  - [x] State the per-direction basis for NVLink, PCIe, and HDR InfiniBand on
+        slide 17.
+  - [ ] On slide 16, replace `lane` with **NVLink** or **link**: one A100 NVLink
+        provides 25 GB/s in each direction, or 50 GB/s aggregate
+        bidirectionally. Four links connect each GPU pair in the four-GPU
+        topology.
+  - [ ] On slide 31, state the basis in the column headings. The A100, H100, and
+        B200 GPU-pair values and the PCIe values appear to be aggregate
+        bidirectional figures, unlike slide 17's per-direction figures.
+  - [ ] Recheck the P100 and V100 rows against the exact topology and form
+        factor; `non-uniform` alone does not define what the number measures.
   - Acceptance: every bandwidth value can be traced to an official product or
     architecture source using the same definition.
 
 - [ ] **Slide 14: correct the `13,824 instructions/cycle` label.**
-  - Re-derive the value and list its assumptions.
-  - If it represents lane-level FP32 work, label it as such rather than as
-    independent instructions.
-  - Remove the calculation if it does not improve the conceptual explanation
-    of massive parallelism.
+  - The current `64 FP32 instructions/SM × number SMs = 6,912 FLOP/cycle`
+    wording still mixes instructions, operations, and cycles.
+  - Replace `64 FP32 instructions/SM` with **64 FP32 operations/SM/cycle** if
+    illustrating ordinary add or multiply throughput.
+  - If the slide says **peak FP32 throughput**, count an FMA as two operations:
+    `108 SMs × 64 FP32 lanes/SM × 2 FLOP/FMA = 13,824 FLOP/cycle`, or about
+    19.5 TFLOP/s at the published 1.41 GHz boost clock.
+  - State that this is a theoretical peak requiring all FP32 pipelines to be
+    occupied with independent, ready operations and no relevant stalls.
+  - Do not derive FP32 arithmetic throughput from the number of warp
+    schedulers.
 
 - [ ] **Slides 15 and 29: standardize capacity units.**
-  - Use `KiB`, `MiB`, and `GiB` for binary capacities where appropriate.
-  - Do not use lowercase `b` for byte capacities.
-  - Verify whether shared-memory and L1 figures are separate, combined, or
-    configurable for each architecture.
+  - [x] Use the simpler `KB`, `MB`, and `GB` convention on the slides. This
+        matches NVIDIA's documentation convention, where `KB` in the relevant
+        capability tables denotes 1,024 bytes.
+  - [ ] Do not use lowercase `b` for byte capacities; slide 29 still contains
+        `24Kb`, which should be `24 KB`.
+  - [ ] Correct the register rows. A100 and H100 have **64 K 32-bit registers
+        per SM**, equivalent to **256 KB**; `256 K × 4 B` incorrectly produces
+        1 MB. Verify the corresponding value for every architecture in slide
+        29 rather than copying the A100 value across generations.
+  - [ ] Verify whether shared-memory and L1 figures are separate, combined, or
+        configurable for each architecture.
+  - Acceptance: display units are simple and consistent, while the underlying
+    byte count and the meaning of each capacity remain correct.
 
 - [ ] **Slide 13: verify the matrix equation and tile table visually.**
-  - Ensure the equation renders in PowerPoint and in exported PDF/PNG output.
+  - The current rendered PNG still drops the matrix equation and some variable
+    labels, leaving visible fragments such as `where , B` and `C`.
+  - Ensure the equation renders in PowerPoint and in exported PDF/PNG output;
+    checking only the editable PowerPoint view is insufficient.
   - Define what the three tile dimensions mean.
   - Keep tile sizes explicitly tied to a data type and architecture.
 
@@ -292,4 +333,3 @@ will inherit ambiguous terminology and units.
 - [ROCm profiling and debugging tools](https://rocm.docs.amd.com/en/latest/components/profilers-and-debuggers.html)
 - [NVIDIA CUDA programming guide](https://docs.nvidia.com/cuda/cuda-programming-guide/)
 - [NVIDIA A100 specifications](https://www.nvidia.com/en-us/data-center/a100/)
-
